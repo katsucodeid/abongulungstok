@@ -389,7 +389,7 @@ async function start() {
   // Preserve every existing stock value; only missing item keys receive defaults.
   db.stockStartDate ||= "2026-11-11";
   db.users ||= []; db.transactions ||= []; db.processed ||= [];
-  if (process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD && !db.users.some(x => x.username === process.env.ADMIN_USERNAME)) {
+  if (process.env.ADMIN_USERNAME && process.env.ADMIN_PASSWORD && !db.users.some(x => x.role === "admin")) {
     db.users.push({ id: require("crypto").randomUUID(), username: process.env.ADMIN_USERNAME, passwordHash: await bcrypt.hash(process.env.ADMIN_PASSWORD, 12), role: "admin" });
     console.log("Akun admin awal dibuat:", process.env.ADMIN_USERNAME);
   }
