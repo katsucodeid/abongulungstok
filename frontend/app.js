@@ -239,12 +239,6 @@ async function applyUpdate(){
           if(title)title.textContent="Kode server diperbarui";
           if(message)message.textContent=window.aggkrtsReleaseAssetUrl?"Mengunduh APK Android Abon Gulung terbaru…":"Kode server sudah diperbarui. Belum ada APK rilis lebih baru di repository Abon Gulung.";
           if(status)status.textContent="Kode server diperbarui. Menyiapkan pemasangan APK…";
-          if(window.AbonGulungNative?.downloadAndInstallApk){
-            const result=window.AbonGulungNative.downloadAndInstallApk((isAggkrtsApp?(window.aggkrtsReleaseAssetUrl||""):"https://github.com/katsucodeid/abongulungstok/releases/latest/download/Abon-Gulung-Gembul-Stok-Kertas.apk"));
-            if(result==="STARTED"){if(message)message.textContent="APK diunduh ke folder Download. Konfirmasi pemasangan Android setelah unduhan selesai.";if(status)status.textContent="Unduhan APK dimulai.";if(overlay)overlay.classList.add("hidden");return;}
-            if(result==="PERMISSION_REQUIRED"){if(message)message.textContent="Aktifkan izin memasang aplikasi tidak dikenal untuk aplikasi ini, lalu ulangi Update Aplikasi.";if(status)status.textContent="Izin pemasangan diperlukan.";if(overlay)overlay.classList.add("hidden");return;}
-            if(String(result).startsWith("ERROR:"))throw new Error(result.slice(6));
-          }
           if(status)status.textContent="Kode server Abon Gulung berhasil diperbarui. Memuat ulang aplikasi…";
           if(message)message.textContent="Database dan akun tetap dipertahankan. Aplikasi akan tersambung kembali ke server Abon Gulung.";
           if(overlay)overlay.classList.add("hidden");
