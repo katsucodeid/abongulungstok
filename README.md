@@ -83,7 +83,8 @@ Server berjalan pada `http://127.0.0.1:8788`. Aplikasi Android membuka alamat lo
 - Login menggunakan akun yang tersimpan pada database Abon Gulung.
 - Username admin awal adalah `adminabongulung`.
 - Password awal dibuat acak oleh installer dan ditampilkan hanya ketika akun baru dibuat.
-- Admin dapat membuat akun staff melalui mekanisme pengelolaan akun yang tersedia di backend.
+- Admin dapat mengganti username/password akun sendiri dari menu **Manajemen Akun**.
+- Admin dapat membuat akun staff/admin, mengatur ulang password akun lain, dan menghapus akun selain akun yang sedang dipakai atau admin terakhir.
 - Jangan memakai kredensial `insanadmin` atau password dari aplikasi lama.
 
 Jika password admin hilang, jangan menghapus database. Amankan salinan database dan konfigurasi terlebih dahulu, lalu lakukan prosedur pemulihan akun secara terkontrol.
