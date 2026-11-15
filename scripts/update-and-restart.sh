@@ -100,6 +100,8 @@ node --check server.js
 node --check daily-reports.js
 node --check management.js
 node --check ../frontend/app.js
+node --check ../frontend/sw.js
+node --check ../frontend/config.js
 
 write_status "restarting" "Dependensi siap. Menghentikan server lama dan menjalankan server baru…"
 if kill -0 "$SERVER_PID" 2>/dev/null; then
@@ -126,7 +128,7 @@ const req = http.get({host:"127.0.0.1",port:Number(process.argv[2]),path:"/api/h
   let body="";
   res.on("data",chunk=>body+=chunk);
   res.on("end",()=>{
-    try { const data=JSON.parse(body); process.exit(data.ok && data.bootId ? 0 : 1); }
+    try { const data=JSON.parse(body); process.exit(data.ok && data.app === "Abon Gulung Stok Kertas" && data.bootId ? 0 : 1); }
     catch { process.exit(1); }
   });
 });
