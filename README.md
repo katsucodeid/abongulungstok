@@ -1,7 +1,7 @@
 # Abon Gulung Stok Kertas
 
 **Aplikasi mandiri untuk mengelola stok bahan dan kemasan operasional Abon Gulung.**  
-Versi aplikasi: **0.0.2** · Version code: **2** · Package: `id.katsucode.aggkrts`
+Versi aplikasi: **0.0.3** · Version code: **2** · Package: `id.katsucode.aggkrts`
 
 Repository resmi: https://github.com/katsucodeid/abongulungstok
 
@@ -34,7 +34,7 @@ Installer tidak mengimpor database, akun, atau password dari aplikasi lama. Inst
 | Komponen | Nilai |
 |---|---|
 | Nama | Abon Gulung Stok Kertas |
-| Versi | **0.0.2** |
+| Versi | **0.0.3** |
 | Version code | `2` |
 | Application ID | `id.katsucode.aggkrts` |
 | Minimum Android | Android 6.0 (API 23) |
@@ -44,7 +44,7 @@ Installer tidak mengimpor database, akun, atau password dari aplikasi lama. Inst
 | Backend | Node.js + Express |
 | Port default | `8788` |
 
-### Catatan versi 0.0.2
+### Catatan versi 0.0.3
 
 - Memisahkan database, akun admin, token sesi, direktori laporan, dan port backend dari aplikasi stok sebelumnya.
 - Memisahkan cache browser dan identitas penyimpanan lokal.
@@ -101,7 +101,7 @@ Repository Actions secrets yang diperlukan:
 
 Jangan pernah menaruh nilai secret, password, file JKS, database, atau `.env` di repository. Workflow memeriksa sertifikat SHA256 Abon Gulung sebelum menerbitkan APK.
 
-Build berjalan otomatis ketika file aplikasi berubah di branch `main`, atau dapat dijalankan manual melalui tab **Actions**. Jika berhasil, rilis akan memakai tag `aggkrts-v0.0.2` dan file `Abon-Gulung-Stok-Kertas-V0.0.2.apk`. Status build dan artefak harus diperiksa di GitHub Actions; commit kode saja tidak berarti APK sudah berhasil dibuat.
+Build berjalan otomatis ketika file aplikasi berubah di branch `main`, atau dapat dijalankan manual melalui tab **Actions**. Jika berhasil, rilis akan memakai tag `aggkrts-v0.0.3` dan file `Abon-Gulung-Stok-Kertas-V0.0.3.apk`. Status build dan artefak harus diperiksa di GitHub Actions; commit kode saja tidak berarti APK sudah berhasil dibuat.
 
 ## Pembaruan
 
