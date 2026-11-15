@@ -1,9 +1,9 @@
 {
-  "id": "./",
+  "id": "./?app=aggkrts",
   "name": "Abon Gulung Stok Kertas",
   "short_name": "Abon Gulung",
   "description": "Sistem persediaan kertas, produksi, dan operasional Abon Gulung Stok Kertas.",
-  "start_url": "./",
+  "start_url": "./?app=aggkrts",
   "scope": "./",
   "display": "standalone",
   "background_color": "#fff8ef",
