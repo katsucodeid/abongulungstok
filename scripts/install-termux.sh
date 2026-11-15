@@ -11,6 +11,11 @@ touch .env
 OLD_CONFIG=0
 if grep -q "^DATA_DIR=.*abongulunggembulstokinsan" .env || grep -q "^ADMIN_USERNAME=insanadmin$" .env; then
   OLD_CONFIG=1
+fi
+if grep -q '^DATA_DIR=' .env && ! grep -q "^DATA_DIR=$HOME/abongulungstok/backend/data$" .env; then
+  OLD_CONFIG=1
+fi
+if [ "$OLD_CONFIG" -eq 1 ]; then
   cp -p .env ".env.before-abongulung-separation-$(date +%Y%m%d-%H%M%S)"
 fi
 set_env() {
