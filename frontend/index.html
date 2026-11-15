@@ -468,9 +468,24 @@ button{background:var(--accent);color:#fff;box-shadow:none}
 <div class="row"><div><b id="who"></b><div class="muted">Abon Gulung Stok Kertas · Offline lokal · satu perangkat <span id="pendingCount"></span></div></div></div><p id="syncErrors" class="low"></p>
 <nav class="tabs" id="mainNav" aria-label="Navigasi utama"><div class="nav-drawer-head"><div><b>Navigasi</b><small>Abon Gulung Stok Kertas · Stok Kertas</small></div><button class="nav-close" type="button" aria-label="Tutup navigasi" onclick="closeMenu()">×</button></div>
 <div class="nav-group"><button class="nav-group-toggle" type="button" aria-expanded="true" aria-controls="navOperations" onclick="toggleNavGroup('navOperations')"><span>▸ &nbsp; OPERASIONAL</span><span class="nav-chevron">⌄</span></button><div class="nav-group-items expanded" id="navOperations"><button class="nav-link" onclick="showTab('dashboard')">▦ &nbsp; Stok</button><button class="nav-link" onclick="showTab('incoming')">📦 &nbsp; Stok Datang</button><button class="nav-link" onclick="showTab('production')">🎯 &nbsp; Target</button><button class="nav-link" onclick="showTab('history')">🧾 &nbsp; Riwayat</button><button class="nav-link" onclick="showTab('report')">📊 &nbsp; Laporan</button><button class="nav-link" onclick="showTab('manual')">▤ &nbsp; Stok Manual</button></div></div>
-<div class="nav-group"><button class="nav-group-toggle" type="button" aria-expanded="false" aria-controls="navSystem" onclick="toggleNavGroup('navSystem')"><span>▸ &nbsp; PENGATURAN &amp; SISTEM</span><span class="nav-chevron">⌄</span></button><div class="nav-group-items" id="navSystem"><button class="nav-link" onclick="showTab('alarm')">⏰ &nbsp; Alarm Kerja</button><button class="nav-link" onclick="showTab('backup')">🛡️ &nbsp; Pencadangan</button><button class="nav-link" onclick="showTab('about')">ⓘ &nbsp; Tentang &amp; Pembaruan</button></div></div>
+<div class="nav-group"><button class="nav-group-toggle" type="button" aria-expanded="false" aria-controls="navSystem" onclick="toggleNavGroup('navSystem')"><span>▸ &nbsp; PENGATURAN &amp; SISTEM</span><span class="nav-chevron">⌄</span></button><div class="nav-group-items" id="navSystem"><button class="nav-link" onclick="showTab('alarm')">⏰ &nbsp; Alarm Kerja</button><button class="nav-link admin-only" id="usersNav" onclick="showTab('users')">👥 &nbsp; Manajemen Akun</button><button class="nav-link" onclick="showTab('backup')">🛡️ &nbsp; Pencadangan</button><button class="nav-link" onclick="showTab('about')">ⓘ &nbsp; Tentang &amp; Pembaruan</button></div></div>
 <div class="nav-footer"><button class="danger nav-logout" type="button" onclick="logout()">↪ &nbsp; Keluar dari akun</button></div></nav>
-<div id="alarm" class="tab panel hidden">
+<div id="users" class="tab panel hidden">
+<h2>👥 Manajemen Akun Abon Gulung</h2>
+<p class="hint">Kelola akun yang tersimpan hanya pada database Abon Gulung Stok Kertas. Akun aplikasi lain tidak digunakan di sini.</p>
+<div class="history-card"><h3>Akun admin yang sedang digunakan</h3>
+<label for="adminNewUsername">Username baru</label><input id="adminNewUsername" autocomplete="username" placeholder="adminabongulung">
+<label for="adminNewPassword">Password baru (kosongkan jika tidak diganti)</label><input id="adminNewPassword" type="password" autocomplete="new-password" placeholder="Minimal 10 karakter">
+<button type="button" onclick="changeOwnCredentials()">Simpan perubahan akun admin</button>
+<p id="adminCredentialsStatus" class="muted" aria-live="polite"></p></div>
+<div class="history-card"><h3>Buat akun baru</h3>
+<label for="managedUsername">Username</label><input id="managedUsername" autocomplete="off" placeholder="contoh: stafgudang">
+<label for="managedPassword">Password (minimal 10 karakter)</label><input id="managedPassword" type="password" autocomplete="new-password">
+<label for="managedRole">Hak akses</label><select id="managedRole"><option value="staff">Staff</option><option value="admin">Admin</option></select>
+<button type="button" onclick="createManagedUser()">Tambah akun</button>
+<p id="managedUserStatus" class="muted" aria-live="polite"></p></div>
+<h3>Daftar akun</h3><div id="managedUserList" class="grid"></div>
+<button class="secondary" type="button" onclick="loadUsers()">↻ Muat ulang akun</button></div><div id="alarm" class="tab panel hidden">
 <style>
 #alarm .alarm-hero{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(220px,.8fr);gap:14px;margin:12px 0}
 #alarm .alarm-box{min-width:0;border:1px solid var(--line);border-radius:15px;padding:14px;background:color-mix(in srgb,var(--bg) 55%,var(--panel))}
