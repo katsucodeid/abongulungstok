@@ -106,7 +106,7 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String downloadAndInstallApk(String urlString) {
             if (Build.VERSION.SDK_INT < 29) return "ERROR:Fitur unduh APK otomatis memerlukan Android 10 atau lebih baru.";
-            if (urlString == null || !urlString.startsWith("https://github.com/katsucodeid/abongulunggembulstokinsan/releases/")) return "ERROR:Sumber APK tidak diizinkan.";
+            if (urlString == null || !urlString.startsWith("https://github.com/katsucodeid/abongulungstok/releases/")) return "ERROR:Sumber APK tidak diizinkan.";
             if (Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
                 try { Intent settings = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + getPackageName())); settings.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); startActivity(settings); return "PERMISSION_REQUIRED"; }
                 catch (Exception e) { return "ERROR:Tidak dapat membuka pengaturan izin pemasangan."; }
