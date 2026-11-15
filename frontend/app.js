@@ -201,7 +201,7 @@ async function checkForUpdates(){
    const body="Versi "+latest+" siap dipasang. Buka aplikasi untuk memperbarui.";
    let delivered=false;
    if(window.AbonGulungNative?.notifyUpdateAvailable){delivered=window.AbonGulungNative.notifyUpdateAvailable(latest,body)==="OK";}
-   else if("Notification"in window&&Notification.permission==="granted"){new Notification("Pembaruan aplikasi tersedia",{body,tag:"insan-app-update"});delivered=true;}
+   else if("Notification"in window&&Notification.permission==="granted"){new Notification("Pembaruan aplikasi tersedia",{body,tag:"aggkrts-app-update"});delivered=true;}
    if(delivered)localStorage.setItem("aggkrts_notified_release",latest);
   }
  }catch(error){console.info("Pemeriksaan update dilewati:",error.message);}
