@@ -212,7 +212,7 @@ async function checkForUpdates(){
   const payload=await response.json();
   const release=isAggkrtsApp?(payload.find(x=>String(x.tag_name||"").startsWith("aggkrts-v"))||null):payload;
   const latest=String(release?.tag_name||"").replace(/^aggkrts-v/i,"").replace(/^v/i,"");
-  if(isAggkrtsApp)window.aggkrtsReleaseAssetUrl=release?.assets?.find(x=>/^Abon-Gulung-Stok-Kertas-V[0-9.]+\\.apk$/i.test(x.name))?.browser_download_url||"";
+  if(isAggkrtsApp)window.aggkrtsReleaseAssetUrl=release?.assets?.find(x=>/^Abon-Gulung-Stok-Kertas-V[0-9.]+\.apk$/i.test(x.name))?.browser_download_url||"";
   const installed=window.AbonGulungNative?.getAppVersion?.()||"0.0.3";
   if(!latest||compareVersions(latest,installed)<=0||(isAggkrtsApp&&!window.aggkrtsReleaseAssetUrl)){if(notice)notice.classList.add("hidden");return;}
   if(title)title.textContent="🔔 Pembaruan tersedia · v"+latest;
