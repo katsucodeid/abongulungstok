@@ -24,7 +24,7 @@ set_env() {
   local key="$1" value="$2"
   local temp=".env.install.tmp"
   grep -v "^${key}=" .env > "$temp" || true
-  printf '%s=%s\\n' "$key" "$value" >> "$temp"
+  printf '%s=%s\n' "$key" "$value" >> "$temp"
   mv "$temp" .env
 }
 
