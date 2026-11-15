@@ -538,7 +538,7 @@ button{background:var(--accent);color:#fff;box-shadow:none}
 <p class="hint">Buat file khusus <b>.aggkrtsbackup</b> yang berisi stok, akun pengguna, transaksi, pengaturan, dan riwayat. Simpan file ini di tempat aman. Pemulihan akan mengganti database aktif sesuai isi file.</p>
 <button id="createBackupButton" onclick="downloadBackup()">⬇️ Buat file cadangan</button>
 <label for="backupFileInput">Pilih file cadangan Abon Gulung (.aggkrtsbackup)</label>
-<input id="backupFileInput" type="file" accept=".aggkrtsbackup,application/json" style="display:block;width:100%;min-height:48px;padding:10px;opacity:1;pointer-events:auto">
+<input id="backupFileInput" type="file" accept=".aggkrtsbackup,.insanbackup,application/json" style="display:block;width:100%;min-height:48px;padding:10px;opacity:1;pointer-events:auto">
 <button class="danger" id="restoreBackupButton" onclick="restoreBackupFile()">Pulihkan data dari file</button>
 <p id="backupStatus" class="muted" aria-live="polite">Fitur ini hanya tersedia untuk admin saat terhubung ke server.</p>
 </section>
