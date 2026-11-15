@@ -1,4 +1,4 @@
-const CACHE = "gembul-stok-v40-v202-ui-dark-update-alarm";
+const CACHE = "aggkrts-stok-kertas-v0-0-2";
 const CORE = ["./", "./index.html", "./app.js", "./config.js", "./manifest.json", "./icon.png"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(CORE)).then(() => self.skipWaiting()));
