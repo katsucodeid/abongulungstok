@@ -53,7 +53,7 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String getAppVersion() {
             try { return getPackageManager().getPackageInfo(getPackageName(),0).versionName; }
-            catch(Exception e) { return "0.0.1"; }
+            catch(Exception e) { return "0.0.2"; }
         }
         @JavascriptInterface
         public String notifyUpdateAvailable(String version,String detail) {
