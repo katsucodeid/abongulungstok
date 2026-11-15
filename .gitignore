@@ -4,3 +4,10 @@ backend/package-lock.json
 data/
 *.log
 .DS_Store
+.env.*
+*.jks
+*.keystore
+*.apk
+*.aggkrtsbackup
+*.insanbackup
+*.tmp
