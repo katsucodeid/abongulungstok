@@ -4,7 +4,7 @@ ROOT="$HOME/abongulungstok"
 cd "$ROOT/backend"
 if [ ! -f .env ]; then echo "File .env belum ada. Jalankan scripts/install-termux.sh"; exit 1; fi
 PORT="$(sed -n 's/^PORT=//p' .env | tail -n 1)"
-PORT="${PORT:-8787}"
+PORT="${PORT:-8788}"
 termux-wake-lock 2>/dev/null || true
 
 if [ ! -d "$HOME/storage/downloads" ] && command -v termux-setup-storage >/dev/null 2>&1; then
