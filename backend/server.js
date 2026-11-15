@@ -299,17 +299,63 @@ Kertas Minyak: ${fmt(s.paper)}pcs
 Mika roti roll : ${fmt(s.mika)}pcs`;
   res.json({ report, stock: s, stockStartDate: db.stockStartDate || null });
 });
-app.get("/api/users", auth, adminOnly, (req, res) => res.json({ users: db.users.map(({ username, role }) => ({ username, role })) }));
+app.get("/api/users", auth, adminOnly, (req, res) => res.json({
+  users: db.users.map(({ username, role }) => ({ username, role })),
+  currentUsername: req.user.username
+}));
 app.post("/api/users", auth, adminOnly, async (req, res) => {
-  const { username, password, role = "staff" } = req.body || {};
-  if (!username || !password || password.length < 10 || !["admin", "staff"].includes(role)) return res.status(400).json({ error: "Username, password minimal 10 karakter, dan role valid wajib diisi." });
-  const result = await locked(async () => {
-    if (db.users.some(x => x.username === username)) throw new Error("Username sudah digunakan.");
-    db.users.push({ id: require("crypto").randomUUID(), username, passwordHash: await bcrypt.hash(password, 12), role });
-    recordAudit(req.user, "user.create", { username, role });
-    await persist();
-  });
-  res.json({ ok: true, username, role });
+  const username = String(req.body?.username || "").trim();
+  const password = String(req.body?.password || "");
+  const role = req.body?.role || "staff";
+  if (!/^[a-zA-Z0-9._-]{3,32}$/.test(username) || password.length < 10 || password.length > 128 || !["admin", "staff"].includes(role)) {
+    return res.status(400).json({ error: "Username 3–32 karakter (huruf, angka, titik, garis bawah, atau strip), password 10–128 karakter, dan role valid wajib diisi." });
+  }
+  try {
+    await locked(async () => {
+      if (db.users.some(x => x.username.toLowerCase() === username.toLowerCase())) throw new Error("Username sudah digunakan.");
+      db.users.push({ id: require("crypto").randomUUID(), username, passwordHash: await bcrypt.hash(password, 12), role });
+      recordAudit(req.user, "user.create", { username, role });
+      await persist();
+    });
+    res.json({ ok: true, username, role });
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.put("/api/users/:username", auth, adminOnly, async (req, res) => {
+  const targetName = String(req.params.username || "");
+  const newUsername = req.body?.newUsername === undefined ? targetName : String(req.body.newUsername).trim();
+  const password = req.body?.password === undefined ? "" : String(req.body.password);
+  if (!/^[a-zA-Z0-9._-]{3,32}$/.test(newUsername) || (password && (password.length < 10 || password.length > 128))) {
+    return res.status(400).json({ error: "Username tidak valid atau password baru kurang dari 10 karakter." });
+  }
+  try {
+    await locked(async () => {
+      const user = db.users.find(x => x.username === targetName);
+      if (!user) throw new Error("Akun tidak ditemukan.");
+      if (db.users.some(x => x !== user && x.username.toLowerCase() === newUsername.toLowerCase())) throw new Error("Username baru sudah digunakan.");
+      const oldUsername = user.username;
+      user.username = newUsername;
+      if (password) user.passwordHash = await bcrypt.hash(password, 12);
+      recordAudit(req.user, "user.update", { oldUsername, newUsername, passwordChanged: !!password });
+      await persist();
+    });
+    res.json({ ok: true, username: newUsername, passwordChanged: !!password });
+  } catch (e) { res.status(400).json({ error: e.message }); }
+});
+app.delete("/api/users/:username", auth, adminOnly, async (req, res) => {
+  const targetName = String(req.params.username || "");
+  try {
+    await locked(async () => {
+      if (targetName === req.user.username) throw new Error("Akun yang sedang digunakan tidak dapat dihapus.");
+      const index = db.users.findIndex(x => x.username === targetName);
+      if (index < 0) throw new Error("Akun tidak ditemukan.");
+      const target = db.users[index];
+      if (target.role === "admin" && db.users.filter(x => x.role === "admin").length <= 1) throw new Error("Admin terakhir tidak dapat dihapus.");
+      db.users.splice(index, 1);
+      recordAudit(req.user, "user.delete", { username: targetName, role: target.role });
+      await persist();
+    });
+    res.json({ ok: true });
+  } catch (e) { res.status(400).json({ error: e.message }); }
 });
 
 require("./management")(app, { auth, adminOnly, locked, persist, getDb: () => db, setDb: value => { db = value; }, itemDefs });
