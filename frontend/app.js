@@ -2,13 +2,13 @@ const API=(window.AGGKRTP_CONFIG?.API_BASE||"").replace(/\/$/,"");
 
 const isAggkrtsApp=new URLSearchParams(location.search).get("app")==="aggkrts";
 if(isAggkrtsApp){
- document.title="Abon Gulung Stok Kertas V0.0.2";
+ document.title="Abon Gulung Stok Kertas V0.0.3";
  const heading=document.querySelector("#about h2");if(heading)heading.textContent="Tentang Abon Gulung Stok Kertas";
- const version=document.getElementById("aboutVersion");if(version)version.textContent="Versi 0.0.2";
- const featureHeading=[...document.querySelectorAll("#about h3")].find(x=>x.textContent.includes("Fitur operasional"));if(featureHeading)featureHeading.textContent="Fitur lengkap · Versi 0.0.2";
+ const version=document.getElementById("aboutVersion");if(version)version.textContent="Versi 0.0.3";
+ const featureHeading=[...document.querySelectorAll("#about h3")].find(x=>x.textContent.includes("Fitur operasional"));if(featureHeading)featureHeading.textContent="Fitur lengkap · Versi 0.0.3";
  const featureNote=featureHeading?.nextElementSibling;if(featureNote)featureNote.textContent="Rilis perdana 15 November 2026: aplikasi Android terpisah dengan fitur stok, transaksi, target produksi, laporan TXT, pencadangan, alarm kerja, notifikasi pembaruan, dan sinkronisasi server lokal.";
- const history=[...document.querySelectorAll("#about .history-card b")].find(x=>x.textContent.includes("Versi 0.0.2"));
- if(history){const card=history.closest(".history-card");if(card)card.innerHTML="<b>Versi 0.0.2 · 15 November 2026</b><ul><li>Pemisahan database, akun admin, token sesi, dan server Termux dari aplikasi stok sebelumnya.</li><li>Identitas aplikasi, laporan, pencadangan, dan penyimpanan lokal khusus Abon Gulung Stok Kertas.</li><li>Riwayat versi dibatasi pada rilis aggkrts repository ini.</li><li>Perbaikan pembaruan server dan tautan APK khusus Abon Gulung.</li></ul>";}
+ const history=[...document.querySelectorAll("#about .history-card b")].find(x=>x.textContent.includes("Versi 0.0.3"));
+ if(history){const card=history.closest(".history-card");if(card)card.innerHTML="<b>Versi 0.0.3 · 15 November 2026</b><ul><li>Pemisahan database, akun admin, token sesi, dan server Termux dari aplikasi stok sebelumnya.</li><li>Identitas aplikasi, laporan, pencadangan, dan penyimpanan lokal khusus Abon Gulung Stok Kertas.</li><li>Riwayat versi dibatasi pada rilis aggkrts repository ini.</li><li>Perbaikan pembaruan server dan tautan APK khusus Abon Gulung.</li></ul>";}
 }
 
 const $=id=>document.getElementById(id);
@@ -124,7 +124,7 @@ async function deleteManagedUser(username){
 }
 async function loadAbout(){
    const versionEl=$("aboutVersion"), list=$("changeLogList"), status=$("changeLogStatus");
-   const installed=window.AbonGulungNative?.getAppVersion?.()||"0.0.2";
+   const installed=window.AbonGulungNative?.getAppVersion?.()||"0.0.3";
    if(versionEl)versionEl.textContent="Versi "+installed;
    if(list)list.replaceChildren();
    if(status)status.textContent="Informasi versi khusus Abon Gulung Stok Kertas. Pembaruan APK hanya berasal dari rilis aggkrts-v* repository Abon Gulung.";
@@ -213,7 +213,7 @@ async function checkForUpdates(){
   const release=isAggkrtsApp?(payload.find(x=>String(x.tag_name||"").startsWith("aggkrts-v"))||null):payload;
   const latest=String(release?.tag_name||"").replace(/^aggkrts-v/i,"").replace(/^v/i,"");
   if(isAggkrtsApp)window.aggkrtsReleaseAssetUrl=release?.assets?.find(x=>/^Abon-Gulung-Stok-Kertas-V[0-9.]+\\.apk$/i.test(x.name))?.browser_download_url||"";
-  const installed=window.AbonGulungNative?.getAppVersion?.()||"0.0.2";
+  const installed=window.AbonGulungNative?.getAppVersion?.()||"0.0.3";
   if(!latest||compareVersions(latest,installed)<=0||(isAggkrtsApp&&!window.aggkrtsReleaseAssetUrl)){if(notice)notice.classList.add("hidden");return;}
   if(title)title.textContent="🔔 Pembaruan tersedia · v"+latest;
   if(message)message.textContent=(release.name||"Versi terbaru Abon Gulung Stok Kertas")+" sudah tersedia. Ketuk Update Sekarang untuk memperbarui aplikasi.";
