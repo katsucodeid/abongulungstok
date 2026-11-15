@@ -462,7 +462,7 @@ button{background:var(--accent);color:#fff;box-shadow:none}
 </style></head><body>
 <header><button class="secondary menu-toggle" id="menuToggle" type="button" aria-label="Buka navigasi" aria-expanded="false" onclick="toggleMenu()"><span></span><span></span><span></span></button><div class="brand-lockup"><img class="brand-logo" src="icon.png" alt="Logo Abon Gulung Stok Kertas"><div class="brand-copy"><b>ABON GULUNG GEMBUL</b><div class="muted">STOK KERTAS · PRODUKSI · OPERASIONAL</div></div></div><div class="header-actions"><div class="clock-chip" aria-label="Waktu sekarang"><strong id="liveClock">--:--:--</strong><small id="liveDate">Memuat tanggal…</small></div><button id="themeToggle" class="secondary theme-toggle" type="button" style="width:auto" aria-label="Ganti tema" aria-pressed="false">🌙 Tema Gelap</button></div></header>
 <button class="nav-backdrop" id="navBackdrop" aria-label="Tutup navigasi" onclick="closeMenu()"></button>
-<main><div id="connection" class="muted">Memeriksa koneksi…</div><section id="updateNotice" class="panel hidden"><b id="updateTitle">Pembaruan tersedia</b><p id="updateMessage" class="muted">Versi baru tersedia.</p><button id="updateButton" onclick="applyUpdate()">Update Sekarang</button></section>
+<main><div id="connection" class="muted">Memeriksa koneksi…</div><section id="updateNotice" class="panel hidden"><b id="updateTitle">Pembaruan tersedia</b><p id="updateMessage" class="muted">Versi baru tersedia.</p><button id="updateButton" onclick="installApkUpdate()">Update Sekarang</button></section>
 <section id="login" class="panel"><div class="login-brand"><div><span class="eyebrow">SISTEM OPERASIONAL</span><h2>Selamat datang</h2><p>Masuk untuk mengelola stok dan produksi.</p></div></div><label>Username</label><input id="username" autocomplete="username"><label>Password</label><input id="password" type="password" autocomplete="current-password"><button onclick="login()">Login</button><p id="loginMsg" class="muted"></p></section>
 <section id="app" class="hidden">
 <div class="row"><div><b id="who"></b><div class="muted">Abon Gulung Stok Kertas · Offline lokal · satu perangkat <span id="pendingCount"></span></div></div></div><p id="syncErrors" class="low"></p>
@@ -561,9 +561,9 @@ button{background:var(--accent);color:#fff;box-shadow:none}
 <h3>Pembaruan aplikasi · Versi 0.0.2</h3>
 <p class="hint">Aplikasi ini hanya memeriksa rilis Android bertag aggkrts-v* dari repository katsucodeid/abongulungstok. Riwayat commit repository lain tidak ditampilkan. Saat pembaruan tersedia, aplikasi mengunduh APK Abon Gulung Stok Kertas dari GitHub Releases dan membuka pemasang Android; persetujuan pemasangan tetap diperlukan. Tombol Update Aplikasi juga meminta backend Termux mencadangkan database, mengambil kode terbaru dari branch main, memasang dependensi Node.js, lalu memulai ulang server secara terkontrol. Data akun, stok, transaksi, dan file .env dipertahankan. Sambungkan internet dan jangan tutup Termux selama pembaruan berlangsung.</p>
 <div class="history-card" id="updateCard">
-<b>🔄 Update Aplikasi</b>
-<p class="muted">Gunakan saat ada pembaruan repository. Jangan tutup Termux atau aplikasi selama proses berlangsung.</p>
-<button id="updateAppButton" onclick="applyUpdate()">Update Aplikasi</button>
+<b>🔄 Update Server Abon Gulung</b>
+<p class="muted">Gunakan untuk memperbarui kode server dari repository Abon Gulung saja. Database dan akun tidak dihapus. Jangan tutup Termux selama proses berlangsung.</p>
+<button id="updateAppButton" onclick="applyUpdate()">Update Server</button>
 <p id="updateAppStatus" class="muted" aria-live="polite">Siap memeriksa dan memasang pembaruan.</p>
 </div>
 <h3>Riwayat perubahan versi</h3><article class="history-card"><b>Versi 0.0.2 · 15 November 2026 — Rilis awal</b><ul><li>Aplikasi Android khusus Abon Gulung Stok Kertas dengan package id.katsucode.aggkrts.</li><li>Integrasi WebView dengan backend lokal Termux pada port 8788.</li><li>Fitur stok, stok datang, target produksi, riwayat, laporan, pencadangan, dan pemulihan.</li><li>Alarm kerja Android serta notifikasi pembaruan aplikasi.</li><li>Build APK otomatis melalui GitHub Actions dan penandatanganan Abon Gulung.</li></ul></article>
