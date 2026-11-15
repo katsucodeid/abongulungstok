@@ -37,7 +37,7 @@ Fitur utama:
 - Menyediakan fitur stok, stok datang, target produksi, riwayat, laporan, pencadangan, dan pemulihan.
 - Menambahkan alarm kerja Android, pilihan nada, tes alarm, dan notifikasi pembaruan.
 - Menyiapkan proses build APK melalui GitHub Actions.
-- Mempertahankan sertifikat penandatanganan KatsuCode untuk rilis aplikasi.
+- Mempertahankan sertifikat penandatanganan Abon Gulung untuk rilis aplikasi.
 
 ## Membuat APK dari repository ini
 
@@ -81,7 +81,7 @@ gradle -p android :app-aggkrts:assembleRelease
 
 ## Instalasi backend di Termux
 
-Aplikasi Android terhubung ke backend lokal pada `http://127.0.0.1:8787`. Pada HP server, backend Node.js dijalankan melalui Termux.
+Aplikasi Android terhubung ke backend lokal pada `http://127.0.0.1:8788`. Pada HP server, backend Node.js dijalankan melalui Termux.
 
 Jika ini pemasangan backend baru, jalankan:
 
@@ -103,11 +103,11 @@ git pull origin main
 
 Berikan izin penyimpanan ketika Termux memintanya. Jika belum muncul, jalankan `termux-setup-storage`.
 
-**Catatan database:** skrip instalasi repo ini mengarahkan `DATA_DIR` ke database lama di `~/abongulunggembulstokinsan/backend/data` agar data stok yang sudah ada dapat digunakan bersama. Jangan menghapus folder database lama, file `.env`, atau cadangan. Jangan jalankan dua proses backend pada port 8787 secara bersamaan. Jika backend lama masih aktif dan sudah menggunakan database tersebut, gunakan backend yang sedang berjalan; jangan menyalakan server kedua.
+**Catatan database:** skrip instalasi repo ini mengarahkan `DATA_DIR` ke database lama di `~/abongulunggembulstokinsan/backend/data` agar data stok yang sudah ada dapat digunakan bersama. Jangan menghapus folder database lama, file `.env`, atau cadangan. Jangan jalankan dua proses backend pada port 8788 secara bersamaan. Jika backend lama masih aktif dan sudah menggunakan database tersebut, gunakan backend yang sedang berjalan; jangan menyalakan server kedua.
 
 ## Menjalankan aplikasi
 
-- Pastikan backend Termux aktif pada port 8787.
+- Pastikan backend Termux aktif pada port 8788.
 - Buka APK Abon Gulung Stok Kertas pada HP server.
 - Perangkat lain dapat membuka alamat LAN HP server melalui browser selama terhubung ke Wi-Fi/hotspot yang sama. Gunakan alamat yang ditampilkan Termux saat server mulai.
 
