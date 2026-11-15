@@ -230,7 +230,7 @@ public class MainActivity extends Activity {
             }
         });
         setContentView(webView);
-        webView.loadUrl("http://127.0.0.1:8787/?app=aggkrts");
+        webView.loadUrl("http://127.0.0.1:8788/?app=aggkrts");
     }
 
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
