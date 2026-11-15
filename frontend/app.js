@@ -1,19 +1,19 @@
-const API=(window.INSAN_CONFIG?.API_BASE||"").replace(/\/$/,"");
+const API=(window.ABON GULUNG_CONFIG?.API_BASE||"").replace(/\/$/,"");
 
 const isAggkrtsApp=new URLSearchParams(location.search).get("app")==="aggkrts";
 if(isAggkrtsApp){
- document.title="Abon Gulung Stok Kertas V0.0.1";
+ document.title="Abon Gulung Stok Kertas V0.0.2";
  const heading=document.querySelector("#about h2");if(heading)heading.textContent="Tentang Abon Gulung Stok Kertas";
- const version=document.getElementById("aboutVersion");if(version)version.textContent="Versi 0.0.1";
- const featureHeading=[...document.querySelectorAll("#about h3")].find(x=>x.textContent.includes("Fitur operasional"));if(featureHeading)featureHeading.textContent="Fitur lengkap · Versi 0.0.1";
+ const version=document.getElementById("aboutVersion");if(version)version.textContent="Versi 0.0.2";
+ const featureHeading=[...document.querySelectorAll("#about h3")].find(x=>x.textContent.includes("Fitur operasional"));if(featureHeading)featureHeading.textContent="Fitur lengkap · Versi 0.0.2";
  const featureNote=featureHeading?.nextElementSibling;if(featureNote)featureNote.textContent="Rilis perdana 15 November 2026: aplikasi Android terpisah dengan fitur stok, transaksi, target produksi, laporan TXT, pencadangan, alarm kerja, notifikasi pembaruan, dan sinkronisasi server lokal.";
  const history=[...document.querySelectorAll("#about .history-card b")].find(x=>x.textContent.includes("Versi 2.0.2"));
- if(history){const card=history.closest(".history-card");if(card)card.innerHTML="<b>Versi 0.0.1 · 15 November 2026</b><ul><li>Rilis aplikasi Android baru dengan package id.katsucode.aggkrts.</li><li>Fitur stok, stok datang, target produksi, riwayat, laporan TXT, backup, dan pemulihan.</li><li>Alarm kerja Android dengan pilihan nada, tes alarm, dan notifikasi pembaruan.</li><li>Permintaan izin notifikasi dan alarm tepat waktu ketika fitur terkait digunakan.</li><li>Sertifikat permanen KatsuCode dipertahankan.</li></ul>";}
+ if(history){const card=history.closest(".history-card");if(card)card.innerHTML="<b>Versi 0.0.2 · 15 November 2026</b><ul><li>Pemisahan database, akun admin, token sesi, dan server Termux dari aplikasi stok sebelumnya.</li><li>Identitas aplikasi, laporan, pencadangan, dan penyimpanan lokal khusus Abon Gulung Stok Kertas.</li><li>Riwayat versi dibatasi pada rilis aggkrts repository ini.</li><li>Perbaikan pembaruan server dan tautan APK khusus Abon Gulung.</li></ul>";}
 }
 
 const $=id=>document.getElementById(id);
 let token=localStorage.getItem("aggkrts_token"), state=null, cachedUser=null;
-const DB_NAME="insan-stock-local", STORE="kv", QUEUE="queue";
+const DB_NAME="aggkrts-stock-local", STORE="kv", QUEUE="queue";
 function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE);if(!d.objectStoreNames.contains(QUEUE))d.createObjectStore(QUEUE,{keyPath:"id"});};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
 async function kvGet(key){const d=await openDB();return new Promise((resolve,reject)=>{const r=d.transaction(STORE).objectStore(STORE).get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
 async function kvSet(key,value){const d=await openDB();return new Promise((resolve,reject)=>{const t=d.transaction(STORE,"readwrite");t.objectStore(STORE).put(value,key);t.oncomplete=resolve;t.onerror=()=>reject(t.error);});}
@@ -23,8 +23,8 @@ async function queueAdd(op){const d=await openDB();return new Promise((resolve,r
 async function queueRemove(ids){const d=await openDB();return new Promise((resolve,reject)=>{const t=d.transaction(QUEUE,"readwrite"),s=t.objectStore(QUEUE);ids.forEach(id=>s.delete(id));t.oncomplete=resolve;t.onerror=()=>reject(t.error);});}
 function newId(){return (crypto.randomUUID?crypto.randomUUID():"tx-"+Date.now()+"-"+Math.random().toString(36).slice(2));}
 function setStatus(text,kind="muted"){$("connection").textContent=text;$("connection").className=kind;}
-function applyTheme(theme){const light=theme==="light";const root=document.documentElement;root.classList.toggle("light",light);root.dataset.theme=light?"light":"dark";try{localStorage.setItem("insan_theme",light?"light":"dark");}catch{}const button=$("themeToggle");if(button){button.setAttribute("aria-pressed",String(light));button.textContent=light?"☀️ Tema Terang":"🌙 Tema Gelap";}const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute("content",light?"#fff7ec":"#171b22");}
-function themeInit(){let saved="dark";try{saved=localStorage.getItem("insan_theme")||"dark";}catch{}applyTheme(saved);}
+function applyTheme(theme){const light=theme==="light";const root=document.documentElement;root.classList.toggle("light",light);root.dataset.theme=light?"light":"dark";try{localStorage.setItem("aggkrts_theme",light?"light":"dark");}catch{}const button=$("themeToggle");if(button){button.setAttribute("aria-pressed",String(light));button.textContent=light?"☀️ Tema Terang":"🌙 Tema Gelap";}const meta=document.querySelector('meta[name="theme-color"]');if(meta)meta.setAttribute("content",light?"#fff7ec":"#171b22");}
+function themeInit(){let saved="dark";try{saved=localStorage.getItem("aggkrts_theme")||"dark";}catch{}applyTheme(saved);}
 function toggleTheme(){applyTheme(document.documentElement.classList.contains("light")?"dark":"light");}
 async function api(path,opts={}){const r=await fetch(API+"/api"+path,{...opts,headers:{"Content-Type":"application/json",...(token?{Authorization:"Bearer "+token}:{}),...(opts.headers||{})}});let d={};try{d=await r.json();}catch{}if(!r.ok){const e=new Error(d.error||"Permintaan gagal");e.status=r.status;throw e;}return d;}
 function showLogin(){ $("login").classList.remove("hidden");$("app").classList.add("hidden");}
@@ -68,8 +68,8 @@ async function downloadBackup(){
     const blob=await response.blob();
     const disposition=response.headers.get("Content-Disposition")||"";
     const match=disposition.match(/filename="([^"]+)"/);
-    const filename=match?.[1]||("insan-backup-"+new Date().toISOString().slice(0,10)+".insanbackup");
-    if(window.InsanNative?.saveBackup){const saved=window.InsanNative.saveBackup(await blobToBase64(blob),filename);if(!saved||saved.startsWith("ERROR:"))throw new Error(saved||"Penyimpanan gagal.");if(status)status.textContent="Cadangan tersimpan di Download/Insan Stok/"+filename;}
+    const filename=match?.[1]||("abongulung-backup-"+new Date().toISOString().slice(0,10)+".insanbackup");
+    if(window.AbonGulungNative?.saveBackup){const saved=window.AbonGulungNative.saveBackup(await blobToBase64(blob),filename);if(!saved||saved.startsWith("ERROR:"))throw new Error(saved||"Penyimpanan gagal.");if(status)status.textContent="Cadangan tersimpan di Download/Abon Gulung Stok Kertas/"+filename;}
     else{const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);if(status)status.textContent="Unduhan dimulai: "+filename+". Simpan ke folder Download/Insan Stok.";}
   }catch(e){if(status)status.textContent="Gagal membuat cadangan: "+e.message;}
   finally{if(button)button.disabled=false;}
@@ -102,7 +102,7 @@ async function restoreBackupFile(){
 }
 async function loadAbout(){
    const versionEl=$("aboutVersion"), list=$("changeLogList"), status=$("changeLogStatus");
-   const installed=window.InsanNative?.getAppVersion?.()||"0.0.1";
+   const installed=window.AbonGulungNative?.getAppVersion?.()||"0.0.2";
    if(versionEl)versionEl.textContent="Versi "+installed;
    if(list)list.replaceChildren();
    if(status)status.textContent="Informasi versi khusus Abon Gulung Stok Kertas. Pembaruan APK hanya berasal dari rilis aggkrts-v* repository Abon Gulung.";
@@ -190,8 +190,8 @@ async function checkForUpdates(){
   const payload=await response.json();
   const release=isAggkrtsApp?(payload.find(x=>String(x.tag_name||"").startsWith("aggkrts-v"))||null):payload;
   const latest=String(release?.tag_name||"").replace(/^aggkrts-v/i,"").replace(/^v/i,"");
-  if(isAggkrtsApp)window.aggkrtsReleaseAssetUrl=release?.assets?.find(x=>x.name==="Abon-Gulung-Stok-Kertas-V0.0.1.apk")?.browser_download_url||release?.assets?.[0]?.browser_download_url||"";
-  const installed=window.InsanNative?.getAppVersion?.()||"0.0.1";
+  if(isAggkrtsApp)window.aggkrtsReleaseAssetUrl=release?.assets?.find(x=>/^Abon-Gulung-Stok-Kertas-V[0-9.]+\\.apk$/i.test(x.name))?.browser_download_url||"";
+  const installed=window.AbonGulungNative?.getAppVersion?.()||"0.0.2";
   if(!latest||compareVersions(latest,installed)<=0){if(notice)notice.classList.add("hidden");return;}
   if(title)title.textContent="🔔 Pembaruan tersedia · v"+latest;
   if(message)message.textContent=(release.name||"Versi terbaru Abon Gulung Stok Kertas")+" sudah tersedia. Ketuk Update Sekarang untuk memperbarui aplikasi.";
@@ -200,7 +200,7 @@ async function checkForUpdates(){
   if(notified!==latest){
    const body="Versi "+latest+" siap dipasang. Buka aplikasi untuk memperbarui.";
    let delivered=false;
-   if(window.InsanNative?.notifyUpdateAvailable){delivered=window.InsanNative.notifyUpdateAvailable(latest,body)==="OK";}
+   if(window.AbonGulungNative?.notifyUpdateAvailable){delivered=window.AbonGulungNative.notifyUpdateAvailable(latest,body)==="OK";}
    else if("Notification"in window&&Notification.permission==="granted"){new Notification("Pembaruan aplikasi tersedia",{body,tag:"insan-app-update"});delivered=true;}
    if(delivered)localStorage.setItem("aggkrts_notified_release",latest);
   }
@@ -209,9 +209,9 @@ async function checkForUpdates(){
 }
 const updateDelay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function applyUpdate(){
-  if(window.insanUpdateRunning)return;
+  if(window.aggkrtsUpdateRunning)return;
   if(!token||cachedUser?.role!=="admin"){if($("updateAppStatus"))$("updateAppStatus").textContent="Fitur pembaruan hanya dapat dijalankan oleh admin.";return;}
-  window.insanUpdateRunning=true;
+  window.aggkrtsUpdateRunning=true;
   const button=$("updateAppButton"),status=$("updateAppStatus"),overlay=$("updateProgress");
   if(button)button.disabled=true;
   if(overlay)overlay.classList.remove("hidden");
@@ -229,10 +229,10 @@ async function applyUpdate(){
         if(status&&result.message)status.textContent=result.message;
         if(result.status==="completed"){
           if(title)title.textContent="Kode server diperbarui";
-          if(message)message.textContent="Mengunduh APK Android terbaru…";
+          if(message)message.textContent=window.aggkrtsReleaseAssetUrl?"Mengunduh APK Android Abon Gulung terbaru…":"Kode server sudah diperbarui. Belum ada APK rilis lebih baru di repository Abon Gulung.";
           if(status)status.textContent="Kode server diperbarui. Menyiapkan pemasangan APK…";
-          if(window.InsanNative?.downloadAndInstallApk){
-            const result=window.InsanNative.downloadAndInstallApk((isAggkrtsApp?(window.aggkrtsReleaseAssetUrl||""):"https://github.com/katsucodeid/abongulungstok/releases/latest/download/Abon-Gulung-Gembul-Stok-Kertas.apk"));
+          if(window.AbonGulungNative?.downloadAndInstallApk){
+            const result=window.AbonGulungNative.downloadAndInstallApk((isAggkrtsApp?(window.aggkrtsReleaseAssetUrl||""):"https://github.com/katsucodeid/abongulungstok/releases/latest/download/Abon-Gulung-Gembul-Stok-Kertas.apk"));
             if(result==="STARTED"){if(message)message.textContent="APK diunduh ke folder Download. Konfirmasi pemasangan Android setelah unduhan selesai.";if(status)status.textContent="Unduhan APK dimulai.";if(overlay)overlay.classList.add("hidden");return;}
             if(result==="PERMISSION_REQUIRED"){if(message)message.textContent="Aktifkan izin memasang aplikasi tidak dikenal untuk aplikasi ini, lalu ulangi Update Aplikasi.";if(status)status.textContent="Izin pemasangan diperlukan.";if(overlay)overlay.classList.add("hidden");return;}
             if(String(result).startsWith("ERROR:"))throw new Error(result.slice(6));
@@ -268,7 +268,7 @@ async function applyUpdate(){
     if(title)title.textContent="Pembaruan tidak selesai";
     alert("Pembaruan gagal: "+error.message+"\nPeriksa Termux sebelum mencoba kembali.");
   }finally{
-    window.insanUpdateRunning=false;
+    window.aggkrtsUpdateRunning=false;
     if(button)button.disabled=false;
   }
 }
@@ -280,7 +280,7 @@ async function createDailyReport(){
   catch(error){if(status)status.textContent="Gagal membuat laporan: "+error.message;}
   finally{if(button)button.disabled=false;}
 }
-async function loadReport(){if(!state)return;const s=state.stock,fmt=n=>Number(n||0).toLocaleString("id-ID");$("reportText").value=`*INSAN*:
+async function loadReport(){if(!state)return;const s=state.stock,fmt=n=>Number(n||0).toLocaleString("id-ID");$("reportText").value=`*ABON GULUNG*:
 Box isi 3 : ${fmt(s.box3)}pcs
 Box isi 5 luar : ${fmt(s.box5outer)}pcs
 Box isi 5 dalam : ${fmt(s.box5inner)}pcs
@@ -289,19 +289,19 @@ Mika roti roll : ${fmt(s.mika)}pcs`;}
 function generateFullStockReport(){
 const source=$("stockOpnameInput").value;
 if(!source.trim()){ $("stockOpnameMsg").textContent="Tempel pesan stock opname terlebih dahulu."; return; }
-const section=/\*INSAN\*:[\s\S]*?(?=\n(?:_{5,}|-{5,})|$)/i;
-if(!section.test(source)){ $("stockOpnameMsg").textContent="Bagian *INSAN* tidak ditemukan. Pastikan pesan memiliki judul *INSAN*:. Tidak ada teks yang diubah."; return; }
+const section=/\*ABON GULUNG\*:[\s\S]*?(?=\n(?:_{5,}|-{5,})|$)/i;
+if(!section.test(source)){ $("stockOpnameMsg").textContent="Bagian *ABON GULUNG* tidak ditemukan. Pastikan pesan memiliki judul *ABON GULUNG*:. Tidak ada teks yang diubah."; return; }
 const s=state?.stock;
 if(!s){ $("stockOpnameMsg").textContent="Data stok belum tersedia. Hubungkan ke server lalu perbarui data."; return; }
 const fmt=n=>Number(n||0).toLocaleString("id-ID");
-const replacement=`*INSAN*:
+const replacement=`*ABON GULUNG*:
 Box isi 3 : ${fmt(s.box3)}pcs
 Box isi 5 luar : ${fmt(s.box5outer)}pcs
 Box isi 5 dalam : ${fmt(s.box5inner)}pcs
 Kertas Minyak: ${fmt(s.paper)}pcs
 Mika roti roll : ${fmt(s.mika)}pcs`;
 $("reportText").value=source.replace(section,replacement);
-$("stockOpnameMsg").textContent="Berhasil! Hanya bagian *INSAN* yang diperbarui menggunakan stok terbaru dari database.";
+$("stockOpnameMsg").textContent="Berhasil! Hanya bagian *ABON GULUNG* yang diperbarui menggunakan stok terbaru dari database.";
 }
 async function copyReport(){try{await navigator.clipboard.writeText($("reportText").value);alert("Laporan disalin.");}catch{$("reportText").select();document.execCommand("copy");alert("Laporan disalin.");}}
 function updateLiveClock(){const now=new Date();const time=$("liveClock"),date=$("liveDate");if(time)time.textContent=new Intl.DateTimeFormat("id-ID",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false}).format(now);if(date)date.textContent=new Intl.DateTimeFormat("id-ID",{weekday:"short",day:"2-digit",month:"short",year:"numeric"}).format(now);}
@@ -312,19 +312,19 @@ window.addEventListener("online",()=>{setStatus("Koneksi tersedia · memperbarui
 
 // Alarm tab terpisah + pustaka nada lokal.
 let workAlarmTimer=null,workAlarmAudio=null,workAlarmRinging=false,alarmTestTimer=null,alarmPreviewAudio=null,alarmPreviewId=null;
-const WORK_ALARM_KEY="insan_work_alarm_v1",ALARM_TONE_KEY="insan_alarm_tone_v1",ALARM_TONE_DATA_KEY="insan_alarm_tone_data_v1";
+const WORK_ALARM_KEY="aggkrts_work_alarm_v1",ALARM_TONE_KEY="aggkrts_alarm_tone_v1",ALARM_TONE_DATA_KEY="aggkrts_alarm_tone_data_v1";
 const ALARM_TONES={gentle:{name:"Lonceng Lembut",notes:[659,784,988,784,880,988],wave:"sine"},digital:{name:"Digital Pulse",notes:[880,0,1175,0,880,0,1175],wave:"square"},classic:{name:"Alarm Klasik",notes:[740,740,0,988,988,0,740,988],wave:"triangle"},sunrise:{name:"Sunrise Chime",notes:[523,659,784,1047,784,659],wave:"sine"},softbell:{name:"Soft Bell",notes:[784,988,1175,988,784],wave:"sine"},retro:{name:"Retro Arcade",notes:[988,784,659,784,988,1175],wave:"square"},doubletone:{name:"Double Tone",notes:[880,880,0,659,659,0,880,880],wave:"triangle"},nature:{name:"Morning Birds",notes:[1047,1319,1175,1568,1319,1047],wave:"sine"},urgent:{name:"Urgent Beep",notes:[1200,0,1200,0,1500,0,1200],wave:"square"}};
 function alarmEndTime(start){const [h,m]=String(start||"07:00").split(":").map(Number),total=(h*60+m+600)%1440;return String(Math.floor(total/60)).padStart(2,"0")+":"+String(total%60).padStart(2,"0");}
-function customToneMeta(){try{return JSON.parse(localStorage.getItem("insan_alarm_custom_meta_v1")||"{}");}catch{return {};}}
+function customToneMeta(){try{return JSON.parse(localStorage.getItem("aggkrts_alarm_custom_meta_v1")||"{}");}catch{return {};}}
 function toneEntries(){return {...ALARM_TONES,...customToneMeta()};}
 function selectedAlarmTone(){const id=localStorage.getItem(ALARM_TONE_KEY)||"gentle";return toneEntries()[id]?id:"gentle";}
 async function getToneSource(id){if(ALARM_TONES[id])return toneData()[id]||await blobToDataUrl(makeToneWav(id));const src=customToneMeta()[id]?.dataUrl;if(!src)throw new Error("Nada kustom tidak ditemukan.");return src;}
-function importAlarmTone(){const input=$("customAlarmToneFile"),file=input?.files?.[0];if(!file)return;if(file.size>3*1024*1024){$("alarmToneStatus").textContent="Ukuran file maksimal 5 MB agar aman untuk penyimpanan browser.";return;}if(!/^audio\//.test(file.type)&&!(/\.(mp3|wav|ogg|m4a|aac)$/i).test(file.name)){$("alarmToneStatus").textContent="Pilih file MP3, WAV, OGG, M4A, atau AAC.";return;}const reader=new FileReader();reader.onload=()=>{try{const meta=customToneMeta(),id="custom-"+Date.now();meta[id]={name:file.name.replace(/\.[^.]+$/,""),custom:true,dataUrl:reader.result};localStorage.setItem("insan_alarm_custom_meta_v1",JSON.stringify(meta));$("alarmToneStatus").textContent="Nada "+meta[id].name+" ditambahkan. Tekan ✓ untuk mengaktifkan.";input.value="";renderToneLibraries();}catch(e){$("alarmToneStatus").textContent="Penyimpanan penuh. Gunakan file audio lebih kecil.";}};reader.readAsDataURL(file);}
+function importAlarmTone(){const input=$("customAlarmToneFile"),file=input?.files?.[0];if(!file)return;if(file.size>3*1024*1024){$("alarmToneStatus").textContent="Ukuran file maksimal 5 MB agar aman untuk penyimpanan browser.";return;}if(!/^audio\//.test(file.type)&&!(/\.(mp3|wav|ogg|m4a|aac)$/i).test(file.name)){$("alarmToneStatus").textContent="Pilih file MP3, WAV, OGG, M4A, atau AAC.";return;}const reader=new FileReader();reader.onload=()=>{try{const meta=customToneMeta(),id="custom-"+Date.now();meta[id]={name:file.name.replace(/\.[^.]+$/,""),custom:true,dataUrl:reader.result};localStorage.setItem("aggkrts_alarm_custom_meta_v1",JSON.stringify(meta));$("alarmToneStatus").textContent="Nada "+meta[id].name+" ditambahkan. Tekan ✓ untuk mengaktifkan.";input.value="";renderToneLibraries();}catch(e){$("alarmToneStatus").textContent="Penyimpanan penuh. Gunakan file audio lebih kecil.";}};reader.readAsDataURL(file);}
 function toneData(){try{return JSON.parse(localStorage.getItem(ALARM_TONE_DATA_KEY)||"{}");}catch{return {};}}
 function makeToneWav(id){const tone=ALARM_TONES[id]||ALARM_TONES.gentle,rate=16000,duration=4,samples=rate*duration,buffer=new ArrayBuffer(44+samples*2),view=new DataView(buffer),write=(p,str)=>{for(let i=0;i<str.length;i++)view.setUint8(p+i,str.charCodeAt(i));};write(0,"RIFF");view.setUint32(4,36+samples*2,true);write(8,"WAVE");write(12,"fmt ");view.setUint32(16,16,true);view.setUint16(20,1,true);view.setUint16(22,1,true);view.setUint32(24,rate,true);view.setUint32(28,rate*2,true);view.setUint16(32,2,true);view.setUint16(34,16,true);write(36,"data");view.setUint32(40,samples*2,true);for(let i=0;i<samples;i++){const t=i/rate,slot=Math.floor(t/(duration/tone.notes.length)),freq=tone.notes[slot%tone.notes.length],within=(t%(duration/tone.notes.length))/(duration/tone.notes.length),env=freq?Math.min(1,within*18)*Math.max(0,1-within*.55):0,wave=tone.wave==="square"?(Math.sin(2*Math.PI*freq*t)>=0?1:-1):tone.wave==="triangle"?(2/Math.PI)*Math.asin(Math.sin(2*Math.PI*freq*t)):Math.sin(2*Math.PI*freq*t);view.setInt16(44+i*2,Math.max(-1,Math.min(1,wave*env*.48))*32767,true);}return new Blob([buffer],{type:"audio/wav"});}
 function blobToDataUrl(blob){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(blob);});}
 function renderToneLibraries(){const library=$("alarmToneLibrary"),downloaded=$("downloadedAlarmTones");if(!library||!downloaded)return;const saved=toneData(),selected=selectedAlarmTone(),all=Object.entries(toneEntries()),query=($("alarmToneSearch")?.value||"").trim().toLowerCase(),filter=$("alarmToneFilter")?.value||"all",savedCount=all.filter(([id])=>!!saved[id]||!!customToneMeta()[id]).length;const setText=(id,value)=>{const el=$(id);if(el)el.textContent=value;};setText("toneTotalCount",all.length);setText("toneDownloadedCount",savedCount);setText("toneAvailableCount",all.length-savedCount);setText("downloadedToneSummary",savedCount+" nada tersimpan");setText("alarmCurrentTone","Nada alarm aktif: "+(toneEntries()[selected]?.name||ALARM_TONES.gentle.name));library.replaceChildren();downloaded.replaceChildren();const playing=id=>!!(alarmPreviewAudio&&alarmPreviewId===id&&!alarmPreviewAudio.paused);const makeRow=(id,tone,isSaved)=>{const row=document.createElement("article");row.className="tone-row"+(selected===id?" tone-current":"");const info=document.createElement("div");info.className="tone-name";const name=document.createElement("div");name.textContent=tone.name;const sub=document.createElement("span");sub.className="tone-sub";sub.textContent=(selected===id?"Nada alarm aktif · ":"")+(isSaved?"Tersimpan di perangkat":"Belum diunduh");info.append(name,sub);const controls=document.createElement("div");controls.className="tone-actions";const add=(symbol,label,fn,pressed=false)=>{const btn=document.createElement("button");btn.type="button";btn.className="secondary";btn.textContent=symbol;btn.title=label;btn.setAttribute("aria-label",label);btn.setAttribute("aria-pressed",String(pressed));btn.onclick=fn;controls.appendChild(btn);};if(isSaved){add(playing(id)?"Ⅱ":"▶",playing(id)?"Jeda "+tone.name:"Putar "+tone.name,()=>toggleTonePreview(id),playing(id));add("✓",selected===id?"Nada alarm aktif":"Tetapkan "+tone.name+" sebagai nada alarm",()=>setAlarmTone(id),selected===id);}else add("↓","Unduh "+tone.name,()=>downloadTone(id));row.append(info,controls);return row;};const visible=all.filter(([id,tone])=>{const isSaved=!!saved[id]||!!customToneMeta()[id];return tone.name.toLowerCase().includes(query)&&(filter==="all"||(filter==="downloaded"&&isSaved)||(filter==="available"&&!isSaved));});visible.forEach(([id,tone])=>library.appendChild(makeRow(id,tone,!!saved[id]||!!customToneMeta()[id])));if(!visible.length){const empty=document.createElement("p");empty.className="hint";empty.textContent=query?"Tidak ada nada yang cocok dengan pencarian.":"Tidak ada nada pada kategori ini.";library.appendChild(empty);}all.filter(([id])=>!!saved[id]||!!customToneMeta()[id]).forEach(([id,tone])=>downloaded.appendChild(makeRow(id,tone,true)));if(!downloaded.children.length){const empty=document.createElement("p");empty.className="hint";empty.textContent="Belum ada nada tersimpan. Tekan ikon unduh pada nada yang tersedia.";downloaded.appendChild(empty);}const search=$("alarmToneSearch"),select=$("alarmToneFilter");if(search&&!search.dataset.bound){search.dataset.bound="1";search.addEventListener("input",renderToneLibraries);}if(select&&!select.dataset.bound){select.dataset.bound="1";select.addEventListener("change",renderToneLibraries);}}
-async function downloadTone(id){try{const all=toneData();all[id]=await blobToDataUrl(makeToneWav(id));localStorage.setItem(ALARM_TONE_DATA_KEY,JSON.stringify(all));const a=document.createElement("a"),url=URL.createObjectURL(makeToneWav(id));a.href=url;a.download="INSAN-"+id+"-alarm.wav";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);$("alarmToneStatus").textContent=ALARM_TONES[id].name+" tersimpan lokal dan file WAV diunduh.";renderToneLibraries();}catch(e){$("alarmToneStatus").textContent="Gagal menyimpan nada. Ruang penyimpanan browser mungkin penuh.";console.warn(e);}}
+async function downloadTone(id){try{const all=toneData();all[id]=await blobToDataUrl(makeToneWav(id));localStorage.setItem(ALARM_TONE_DATA_KEY,JSON.stringify(all));const a=document.createElement("a"),url=URL.createObjectURL(makeToneWav(id));a.href=url;a.download="ABON GULUNG-"+id+"-alarm.wav";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);$("alarmToneStatus").textContent=ALARM_TONES[id].name+" tersimpan lokal dan file WAV diunduh.";renderToneLibraries();}catch(e){$("alarmToneStatus").textContent="Gagal menyimpan nada. Ruang penyimpanan browser mungkin penuh.";console.warn(e);}}
 async function playTonePreview(id){try{const src=await getToneSource(id);if(alarmPreviewAudio){alarmPreviewAudio.pause();alarmPreviewAudio.currentTime=0;}alarmPreviewId=id;alarmPreviewAudio=new Audio(src);alarmPreviewAudio.onended=()=>renderToneLibraries();await alarmPreviewAudio.play();renderToneLibraries();}catch(e){console.warn("Pratinjau audio gagal",e);}}
 function toggleTonePreview(id){if(alarmPreviewAudio&&alarmPreviewId===id){if(alarmPreviewAudio.paused)alarmPreviewAudio.play().then(renderToneLibraries).catch(e=>console.warn(e));else{alarmPreviewAudio.pause();renderToneLibraries();}}else playTonePreview(id);}
 function pauseTonePreview(id){if(alarmPreviewAudio&&alarmPreviewId===id){alarmPreviewAudio.pause();renderToneLibraries();}}
@@ -332,11 +332,11 @@ function resumeTonePreview(id){toggleTonePreview(id);}
 function setAlarmTone(id){const tone=toneEntries()[id];if(!tone||(!ALARM_TONES[id]&&!customToneMeta()[id])){$("alarmToneStatus").textContent="Nada tidak ditemukan. Impor file audio terlebih dahulu.";return;}localStorage.setItem(ALARM_TONE_KEY,id);const saved=JSON.parse(localStorage.getItem(WORK_ALARM_KEY)||"null");if(saved?.enabled){saved.toneId=id;localStorage.setItem(WORK_ALARM_KEY,JSON.stringify(saved));}$("alarmToneStatus").textContent="✓ "+tone.name+" ditetapkan sebagai nada alarm.";renderToneLibraries();renderWorkAlarm();}
 function renderWorkAlarm(){const input=$("workStartTime"),end=$("workEndTime"),status=$("workAlarmStatus"),toggle=$("workAlarmToggle"),stop=$("workAlarmStop");if(!input||!end)return;const saved=JSON.parse(localStorage.getItem(WORK_ALARM_KEY)||"null");if(saved?.start)input.value=saved.start;end.textContent=alarmEndTime(input.value)+" WIB";if(saved?.enabled){const when=new Date(saved.fireAt),tone=toneEntries()[saved.toneId||selectedAlarmTone()]||ALARM_TONES.gentle;status.textContent="Alarm aktif · "+input.value+" → "+alarmEndTime(input.value)+" WIB · "+when.toLocaleDateString("id-ID")+" · "+tone.name;toggle.textContent="Perbarui & aktifkan";stop.disabled=false;}else{status.textContent=workAlarmRinging?"Alarm sedang berbunyi.":"Alarm belum diaktifkan.";toggle.textContent="Aktifkan alarm";stop.disabled=!workAlarmRinging;}}
 function stopAlarmSound(){workAlarmRinging=false;if(workAlarmAudio){try{workAlarmAudio.pause();workAlarmAudio.currentTime=0;}catch{}workAlarmAudio=null;}renderWorkAlarm();}
-async function playAlarmSound(isTest=false){workAlarmRinging=true;renderWorkAlarm();const saved=JSON.parse(localStorage.getItem(WORK_ALARM_KEY)||"null"),candidate=isTest?selectedAlarmTone():(saved?.toneId||selectedAlarmTone()),id=toneEntries()[candidate]?candidate:"gentle";const src=await getToneSource(id);try{if(workAlarmAudio)workAlarmAudio.pause();workAlarmAudio=new Audio(src);workAlarmAudio.loop=true;await workAlarmAudio.play();}catch(e){console.warn("Audio alarm gagal diputar",e);}if("Notification"in window&&Notification.permission==="granted"){try{new Notification(isTest?"Tes Alarm INSAN":"Waktunya pulang! 🏡",{body:isTest?"Ini adalah percobaan nada alarm.":"Terima kasih sudah bekerja hari ini. Saatnya beristirahat.",tag:"insan-work-alarm"});}catch{}}}
-async function toggleWorkAlarm(){const input=$("workStartTime"),raw=String(input?.value||"").trim(),match=raw.match(/^(\d{1,2})[:.](\d{2})$/);if(!match){alert("Masukkan jam mulai kerja dengan format HH:MM, contoh 07:00.");input?.focus();return;}const hour=Number(match[1]),minute=Number(match[2]);if(!Number.isInteger(hour)||!Number.isInteger(minute)||hour<0||hour>23||minute<0||minute>59){alert("Jam mulai kerja tidak valid. Gunakan rentang 00:00 sampai 23:59.");input?.focus();return;}const start=String(hour).padStart(2,"0")+":"+String(minute).padStart(2,"0");input.value=start;if("Notification"in window&&Notification.permission==="default"){try{await Notification.requestPermission();}catch{}}const [h,m]=start.split(":").map(Number),now=new Date(),fire=new Date(now);fire.setHours(h,m,0,0);fire.setMinutes(fire.getMinutes()+600);if(fire<=now)fire.setDate(fire.getDate()+1);const toneId=selectedAlarmTone();try{const src=await getToneSource(toneId);if(window.InsanNative?.scheduleWorkAlarm){const result=window.InsanNative.scheduleWorkAlarm(fire.getTime(),src);if(result!=="OK")throw new Error(String(result||"Gagal menjadwalkan alarm Android."));}else{scheduleWorkAlarm();$("alarmToneStatus").textContent="Mode browser: alarm tidak dijamin berbunyi setelah aplikasi ditutup.";}}catch(e){$("alarmToneStatus").textContent="Gagal mengaktifkan alarm: "+(e.message||e);return;}localStorage.setItem(WORK_ALARM_KEY,JSON.stringify({start,fireAt:fire.toISOString(),enabled:true,toneId}));workAlarmRinging=false;renderWorkAlarm();$("workAlarmStatus").textContent="Alarm aktif melalui sistem Android · "+start+" → "+alarmEndTime(start)+" WIB";}
-function stopWorkAlarm(){localStorage.removeItem(WORK_ALARM_KEY);if(workAlarmTimer)clearTimeout(workAlarmTimer);workAlarmTimer=null;window.InsanNative?.cancelWorkAlarm?.();stopAlarmSound();renderWorkAlarm();}
+async function playAlarmSound(isTest=false){workAlarmRinging=true;renderWorkAlarm();const saved=JSON.parse(localStorage.getItem(WORK_ALARM_KEY)||"null"),candidate=isTest?selectedAlarmTone():(saved?.toneId||selectedAlarmTone()),id=toneEntries()[candidate]?candidate:"gentle";const src=await getToneSource(id);try{if(workAlarmAudio)workAlarmAudio.pause();workAlarmAudio=new Audio(src);workAlarmAudio.loop=true;await workAlarmAudio.play();}catch(e){console.warn("Audio alarm gagal diputar",e);}if("Notification"in window&&Notification.permission==="granted"){try{new Notification(isTest?"Tes Alarm ABON GULUNG":"Waktunya pulang! 🏡",{body:isTest?"Ini adalah percobaan nada alarm.":"Terima kasih sudah bekerja hari ini. Saatnya beristirahat.",tag:"insan-work-alarm"});}catch{}}}
+async function toggleWorkAlarm(){const input=$("workStartTime"),raw=String(input?.value||"").trim(),match=raw.match(/^(\d{1,2})[:.](\d{2})$/);if(!match){alert("Masukkan jam mulai kerja dengan format HH:MM, contoh 07:00.");input?.focus();return;}const hour=Number(match[1]),minute=Number(match[2]);if(!Number.isInteger(hour)||!Number.isInteger(minute)||hour<0||hour>23||minute<0||minute>59){alert("Jam mulai kerja tidak valid. Gunakan rentang 00:00 sampai 23:59.");input?.focus();return;}const start=String(hour).padStart(2,"0")+":"+String(minute).padStart(2,"0");input.value=start;if("Notification"in window&&Notification.permission==="default"){try{await Notification.requestPermission();}catch{}}const [h,m]=start.split(":").map(Number),now=new Date(),fire=new Date(now);fire.setHours(h,m,0,0);fire.setMinutes(fire.getMinutes()+600);if(fire<=now)fire.setDate(fire.getDate()+1);const toneId=selectedAlarmTone();try{const src=await getToneSource(toneId);if(window.AbonGulungNative?.scheduleWorkAlarm){const result=window.AbonGulungNative.scheduleWorkAlarm(fire.getTime(),src);if(result!=="OK")throw new Error(String(result||"Gagal menjadwalkan alarm Android."));}else{scheduleWorkAlarm();$("alarmToneStatus").textContent="Mode browser: alarm tidak dijamin berbunyi setelah aplikasi ditutup.";}}catch(e){$("alarmToneStatus").textContent="Gagal mengaktifkan alarm: "+(e.message||e);return;}localStorage.setItem(WORK_ALARM_KEY,JSON.stringify({start,fireAt:fire.toISOString(),enabled:true,toneId}));workAlarmRinging=false;renderWorkAlarm();$("workAlarmStatus").textContent="Alarm aktif melalui sistem Android · "+start+" → "+alarmEndTime(start)+" WIB";}
+function stopWorkAlarm(){localStorage.removeItem(WORK_ALARM_KEY);if(workAlarmTimer)clearTimeout(workAlarmTimer);workAlarmTimer=null;window.AbonGulungNative?.cancelWorkAlarm?.();stopAlarmSound();renderWorkAlarm();}
 function scheduleWorkAlarm(){if(workAlarmTimer)clearTimeout(workAlarmTimer);const saved=JSON.parse(localStorage.getItem(WORK_ALARM_KEY)||"null");if(!saved?.enabled)return;const delay=new Date(saved.fireAt).getTime()-Date.now();if(delay<=0){localStorage.removeItem(WORK_ALARM_KEY);playAlarmSound(false);return;}workAlarmTimer=setTimeout(()=>{localStorage.removeItem(WORK_ALARM_KEY);playAlarmSound(false);renderWorkAlarm();},delay);}
-async function scheduleAlarmTest(minutes){if(![1,2,3].includes(minutes))return;if(alarmTestTimer)clearTimeout(alarmTestTimer);stopAlarmSound();const fireAt=new Date(Date.now()+minutes*60000);const status=$("alarmDebugStatus");status.textContent="Menyiapkan tes alarm Android…";try{const toneId=selectedAlarmTone(),src=await getToneSource(toneId);if(window.InsanNative?.scheduleWorkAlarm){const result=window.InsanNative.scheduleWorkAlarm(fireAt.getTime(),src);if(result!=="OK")throw new Error(String(result||"Gagal menjadwalkan alarm Android."));status.textContent="Tes alarm Android dijadwalkan "+minutes+" menit lagi · "+fireAt.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})+". Alarm tetap berjalan saat aplikasi di latar belakang.";return;}status.textContent="Tes browser dijadwalkan "+minutes+" menit lagi · "+fireAt.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})+" (aplikasi harus tetap terbuka).";alarmTestTimer=setTimeout(()=>{status.textContent="Tes alarm berbunyi · "+new Date().toLocaleTimeString("id-ID");playAlarmSound(true);},minutes*60000);}catch(e){status.textContent="Gagal menjadwalkan tes alarm: "+(e.message||e);console.warn("Tes alarm gagal",e);}}
+async function scheduleAlarmTest(minutes){if(![1,2,3].includes(minutes))return;if(alarmTestTimer)clearTimeout(alarmTestTimer);stopAlarmSound();const fireAt=new Date(Date.now()+minutes*60000);const status=$("alarmDebugStatus");status.textContent="Menyiapkan tes alarm Android…";try{const toneId=selectedAlarmTone(),src=await getToneSource(toneId);if(window.AbonGulungNative?.scheduleWorkAlarm){const result=window.AbonGulungNative.scheduleWorkAlarm(fireAt.getTime(),src);if(result!=="OK")throw new Error(String(result||"Gagal menjadwalkan alarm Android."));status.textContent="Tes alarm Android dijadwalkan "+minutes+" menit lagi · "+fireAt.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})+". Alarm tetap berjalan saat aplikasi di latar belakang.";return;}status.textContent="Tes browser dijadwalkan "+minutes+" menit lagi · "+fireAt.toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"})+" (aplikasi harus tetap terbuka).";alarmTestTimer=setTimeout(()=>{status.textContent="Tes alarm berbunyi · "+new Date().toLocaleTimeString("id-ID");playAlarmSound(true);},minutes*60000);}catch(e){status.textContent="Gagal menjadwalkan tes alarm: "+(e.message||e);console.warn("Tes alarm gagal",e);}}
 function cancelAlarmTest(){if(alarmTestTimer)clearTimeout(alarmTestTimer);alarmTestTimer=null;$("alarmDebugStatus").textContent="Tes alarm dibatalkan.";if(workAlarmRinging)stopAlarmSound();}
 if($("workStartTime")){$("workStartTime").addEventListener("input",()=>{$("workEndTime").textContent=alarmEndTime($("workStartTime").value)+" WIB";});renderWorkAlarm();scheduleWorkAlarm();renderToneLibraries();const customInput=$("customAlarmToneFile");if(customInput&&!customInput.dataset.bound){customInput.dataset.bound="1";customInput.addEventListener("change",importAlarmTone);}document.addEventListener("visibilitychange",()=>{if(!document.hidden)scheduleWorkAlarm();});}
 window.addEventListener("offline",()=>setStatus("Offline · tetap bisa mencatat stok","low"));
