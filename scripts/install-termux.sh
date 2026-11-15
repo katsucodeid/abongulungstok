@@ -17,15 +17,43 @@ set_env() {
   key="$1"; value="$2"
   if grep -q "^${key}=" .env; then sed -i "s|^${key}=.*|${key}=${value}|" .env; else printf "%s=%s\n" "$key" "$value" >> .env; fi
 }
+# Selalu paksa direktori, port, dan identitas aplikasi ini ke konfigurasi mandiri.
+# Cadangkan konfigurasi lama sebelum mengubah nilai yang mungkin menunjuk aplikasi lain.
+if grep -q '^DATA_DIR=' .env && ! grep -q "^DATA_DIR=$ROOT/backend/data$" .env; then
+  cp -p .env ".env.before-isolation-$(date +%Y%m%d-%H%M%S)"
+fi
 set_env PORT "8788"
+set_env HOST "127.0.0.1"
 set_env DATA_DIR "$ROOT/backend/data"
 set_env REPORT_DIR "$HOME/storage/downloads/Abon Gulung Stok Kertas"
 if [ "$OLD_CONFIG" -eq 1 ] || ! grep -q "^JWT_SECRET=." .env; then set_env JWT_SECRET "$(openssl rand -hex 32)"; fi
 NEW_ADMIN_PASS=""
 if [ "$OLD_CONFIG" -eq 1 ] || ! grep -q "^ADMIN_USERNAME=." .env; then set_env ADMIN_USERNAME "adminabongulung"; fi
 if [ "$OLD_CONFIG" -eq 1 ] || ! grep -q "^ADMIN_PASSWORD=." .env; then NEW_ADMIN_PASS="$(openssl rand -hex 16)"; set_env ADMIN_PASSWORD "$NEW_ADMIN_PASS"; fi
+# Bila database Abon Gulung sudah sempat dibuat dengan identitas konfigurasi lama,
+# ganti kredensial admin saja tanpa menghapus stok, transaksi, staff, atau riwayat.
+if [ "$OLD_CONFIG" -eq 1 ] && [ -s "$ROOT/backend/data/data.json" ] && [ -n "$NEW_ADMIN_PASS" ]; then
+  ADMIN_USERNAME="adminabongulung" ADMIN_PASSWORD="$NEW_ADMIN_PASS" node <<'NODE'
+const fs = require("fs");
+const path = require("path");
+const bcrypt = require("bcryptjs");
+(async () => {
+  const file = path.join(process.env.HOME, "abongulungstok/backend/data/data.json");
+  const db = JSON.parse(fs.readFileSync(file, "utf8"));
+  db.users = Array.isArray(db.users) ? db.users : [];
+  let admin = db.users.find(user => user.role === "admin");
+  const hash = await bcrypt.hash(process.env.ADMIN_PASSWORD, 12);
+  if (admin) { admin.username = process.env.ADMIN_USERNAME; admin.passwordHash = hash; }
+  else db.users.push({ id: require("crypto").randomUUID(), username: process.env.ADMIN_USERNAME, passwordHash: hash, role: "admin" });
+  const temp = file + ".install.tmp";
+  fs.writeFileSync(temp, JSON.stringify(db, null, 2), { mode: 0o600, flag: "wx" });
+  fs.renameSync(temp, file);
+})().catch(error => { console.error("Gagal menyiapkan akun admin mandiri:", error.message); process.exit(1); });
+NODE
+fi
 chmod 600 .env
 mkdir -p "$ROOT/backend/data" "$HOME/storage/downloads/Abon Gulung Stok Kertas"
+chmod 700 "$ROOT/backend/data"
 if command -v termux-setup-storage >/dev/null 2>&1; then termux-setup-storage; fi
 echo
 echo "Instalasi backend Abon Gulung Stok Kertas selesai."
