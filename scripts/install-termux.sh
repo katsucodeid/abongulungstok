@@ -17,6 +17,7 @@ set_env() {
   key="$1"; value="$2"
   if grep -q "^${key}=" .env; then sed -i "s|^${key}=.*|${key}=${value}|" .env; else printf "%s=%s\n" "$key" "$value" >> .env; fi
 }
+set_env PORT "8788"
 set_env DATA_DIR "$ROOT/backend/data"
 set_env REPORT_DIR "$HOME/storage/downloads/Abon Gulung Stok Kertas"
 if [ "$OLD_CONFIG" -eq 1 ] || ! grep -q "^JWT_SECRET=." .env; then set_env JWT_SECRET "$(openssl rand -hex 32)"; fi
