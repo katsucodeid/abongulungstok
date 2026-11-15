@@ -12,7 +12,7 @@ const app = express();
 const PORT = Number(process.env.PORT || 8788);
 // Bind to all interfaces so trusted devices on the same Wi-Fi/hotspot can connect.
 // Authentication remains mandatory for all data-changing and private API routes.
-const HOST = process.env.HOST || "0.0.0.0";
+const HOST = process.env.HOST || "127.0.0.1";
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const DATA_FILE = path.join(DATA_DIR, "data.json");
 const FRONTEND_DIR = path.resolve(__dirname, "../frontend");
