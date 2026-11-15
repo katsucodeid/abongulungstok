@@ -122,7 +122,7 @@ module.exports = function registerManagementRoutes(app, ctx) {
     for (const t of getDb().transactions) rows.push([t.date,t.type,t.location||"",t.createdBy||"",t.lines?.total||"",t.note||"",Object.entries(t.changes||{}).map(([k,v])=>k+":"+v).join("; ")]);
     const csv = rows.map(row => row.map(v => '"' + String(v ?? "").replace(/"/g,'""') + '"').join(",")).join("\r\n");
     res.setHeader("Content-Type","text/csv; charset=utf-8");
-    res.setHeader("Content-Disposition",'attachment; filename="insan-transaksi.csv"');
+    res.setHeader("Content-Disposition",'attachment; filename="abongulung-transaksi.csv"');
     res.send("\uFEFF" + csv);
   });
   app.get("/api/admin/audit", auth, adminOnly, (req, res) => {
