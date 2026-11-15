@@ -85,7 +85,7 @@ async function restoreBackupFile(){
   let backup;
   try{
     backup=JSON.parse(await file.text());
-    if(backup?.format!=="INSAN-STOCK-BACKUP"||backup?.formatVersion!==1)throw new Error("Format file tidak dikenali sebagai cadangan INSAN.");
+    if(backup?.format!=="ABONGULUNG-STOK-BACKUP"||backup?.formatVersion!==1)throw new Error("Format file tidak dikenali sebagai cadangan Abon Gulung.");
   }catch(e){if(status)status.textContent="File tidak dapat dibaca: "+e.message;return;}
   const confirmed=confirm("PERINGATAN: Pemulihan akan MENGGANTI seluruh data database aktif dengan data dari file ini, termasuk stok, akun, dan transaksi. Server juga membuat cadangan kondisi saat ini sebelum pemulihan. Lanjutkan?");
   if(!confirmed)return;
