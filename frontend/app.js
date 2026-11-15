@@ -76,10 +76,10 @@ async function downloadBackup(){
 }
 async function restoreBackupFile(){
   const input=$("backupFileInput"),status=$("backupStatus"),button=$("restoreBackupButton");
-  if(input&&!input.files?.length){input.click();if(status)status.textContent="Pilih file .aggkrtsbackup dari penyimpanan perangkat.";return;}
+  if(input&&!input.files?.length){input.click();if(status)status.textContent="Pilih file cadangan Abon Gulung dari penyimpanan perangkat.";return;}
   const file=input?.files?.[0];
   if(!file){if(status)status.textContent="Pilih file .aggkrtsbackup terlebih dahulu.";return;}
-  if(!file.name.toLowerCase().endsWith(".aggkrtsbackup")){if(status)status.textContent="Ekstensi file harus .aggkrtsbackup.";return;}
+  if(!/\\.(aggkrtsbackup|insanbackup)$/i.test(file.name)){if(status)status.textContent="Pilih file cadangan Abon Gulung (.aggkrtsbackup).";return;}
   if(file.size>25*1024*1024){if(status)status.textContent="Ukuran file melebihi batas 25 MB.";return;}
   if(!token){if(status)status.textContent="Login sebagai admin untuk memulihkan cadangan.";return;}
   let backup;
