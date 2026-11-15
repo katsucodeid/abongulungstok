@@ -30,8 +30,23 @@ socket.once("timeout", () => { socket.destroy(); process.exit(1); });
 socket.once("error", () => process.exit(1));
 NODE
 then
-  echo "Abon Gulung Stok Kertas sudah berjalan pada port $PORT."
-  echo "Jangan jalankan server kedua. Untuk menerapkan pembaruan, hentikan server lama dengan CTRL+C pada sesi Termux yang menjalankannya, lalu jalankan skrip ini lagi."
+  if node - "$PORT" <<'NODE'
+const http=require("http");
+const req=http.get({host:"127.0.0.1",port:Number(process.argv[2]),path:"/api/health",timeout:1500},res=>{
+ let body="";res.on("data",chunk=>body+=chunk);res.on("end",()=>{
+  try { const d=JSON.parse(body); process.exit(d.ok && d.app==="Abon Gulung Stok Kertas"?0:1); }
+  catch { process.exit(1); }
+ });
+});
+req.on("error",()=>process.exit(1));req.on("timeout",()=>{req.destroy();process.exit(1);});
+NODE
+  then
+    echo "Server Abon Gulung Stok Kertas sudah aktif pada port $PORT."
+  else
+    echo "Port $PORT sedang dipakai layanan lain. Server Abon Gulung tidak dijalankan."
+    exit 1
+  fi
+  echo "Jangan jalankan server kedua. Untuk menerapkan pembaruan, gunakan menu Update Server di aplikasi."
   exit 0
 fi
 
