@@ -49,7 +49,7 @@ Repository ini sudah memiliki workflow **Build Abon Gulung Stok Kertas APK** di 
 2. Tambahkan empat Actions secrets berikut. Isi nilainya langsung di GitHub; jangan menaruh password atau file keystore di repository:
    - `ANDROID_KEYSTORE_BASE64`
    - `ANDROID_KEYSTORE_PASSWORD`
-   - `ANDROID_KEY_ALIAS` — nilai alias: `katsucode`
+   - `ANDROID_KEY_ALIAS` — nilai alias: `abongulung`
    - `ANDROID_KEY_PASSWORD`
 3. Buka tab **Actions**, pilih **Build Abon Gulung Stok Kertas APK**, lalu tekan **Run workflow** pada branch `main`.
 4. Tunggu sampai semua langkah selesai dengan status hijau.
@@ -103,7 +103,7 @@ git pull origin main
 
 Berikan izin penyimpanan ketika Termux memintanya. Jika belum muncul, jalankan `termux-setup-storage`.
 
-**Catatan database:** skrip instalasi repo ini mengarahkan `DATA_DIR` ke database lama di `~/abongulunggembulstokinsan/backend/data` agar data stok yang sudah ada dapat digunakan bersama. Jangan menghapus folder database lama, file `.env`, atau cadangan. Jangan jalankan dua proses backend pada port 8788 secara bersamaan. Jika backend lama masih aktif dan sudah menggunakan database tersebut, gunakan backend yang sedang berjalan; jangan menyalakan server kedua.
+**Catatan database:** skrip instalasi membuat database mandiri di `~/abongulungstok/backend/data`, akun admin dan token autentikasi sendiri, folder laporan `Download/Abon Gulung Stok Kertas`, serta port khusus 8788. Database, akun, dan pembaruan aplikasi lama di `abongulunggembulstokinsan` tidak digunakan atau diimpor. Server aplikasi lama dapat tetap berjalan pada port 8787. Jangan menghapus folder database atau cadangan dari aplikasi mana pun.
 
 ## Menjalankan aplikasi
 
@@ -125,7 +125,7 @@ Koneksi internet diperlukan untuk memeriksa atau mengunduh pembaruan. Operasiona
 
 ## Data, keamanan, dan cadangan
 
-- Database utama berada di direktori data backend yang ditentukan oleh `DATA_DIR`; untuk instalasi yang berbagi data, lokasi default diarahkan ke folder database aplikasi lama.
+- Database utama berada di direktori data backend yang ditentukan oleh `DATA_DIR`; lokasi database khusus berada di `~/abongulungstok/backend/data`; aplikasi lama tidak digunakan.
 - Laporan dan salinan teks disimpan di folder Download/Abon Gulung Gembul.
 - Jangan mengedit file database secara manual.
 - Simpan cadangan berkala di lokasi lain.
