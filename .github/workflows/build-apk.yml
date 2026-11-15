@@ -7,12 +7,15 @@ on:
       - 'android/**'
       - 'frontend/**'
       - 'backend/**'
+      - 'scripts/**'
       - '.github/workflows/build-apk.yml'
   pull_request:
     branches: [main]
     paths:
       - 'android/**'
       - 'frontend/**'
+      - 'backend/**'
+      - 'scripts/**'
       - '.github/workflows/build-apk.yml'
   workflow_dispatch:
 
@@ -86,13 +89,13 @@ jobs:
           CERT_OUTPUT=$("$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --print-certs "$APK")
           echo "$CERT_OUTPUT"
           echo "$CERT_OUTPUT" | grep -qi "ca8447c83f0a71941190ec58fb311902bd1f147f91a2ce250b168f0ff3717604"
-          cp "$APK" android/app-aggkrts/build/outputs/apk/release/Abon-Gulung-Stok-Kertas-V0.0.1.apk
+          cp "$APK" android/app-aggkrts/build/outputs/apk/release/Abon-Gulung-Stok-Kertas-V0.0.2.apk
       - name: Publish release
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && steps.signing.outputs.ready == 'true'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: aggkrts-v0.0.1
-          name: Abon Gulung Stok Kertas V0.0.1
+          tag_name: aggkrts-v0.0.2
+          name: Abon Gulung Stok Kertas V0.0.2
           target_commitish: main
           files: android/app-aggkrts/build/outputs/apk/release/Abon-Gulung-Stok-Kertas-V0.0.1.apk
           make_latest: true
