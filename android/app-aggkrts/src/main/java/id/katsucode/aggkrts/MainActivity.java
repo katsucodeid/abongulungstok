@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
             manager.createNotificationChannel(channel);
         }
     }
-    private class GembulBridge {
+    private class AbonGulungBridge {
         @JavascriptInterface
         public String getAppVersion() {
             try { return getPackageManager().getPackageInfo(getPackageName(),0).versionName; }
@@ -75,14 +75,14 @@ public class MainActivity extends Activity {
 
         @JavascriptInterface
         public String saveBackup(String base64, String filename) {
-            if (Build.VERSION.SDK_INT < 29) return "ERROR:Android 10+ diperlukan untuk folder Download/Abon Gulung Gembul.";
+            if (Build.VERSION.SDK_INT < 29) return "ERROR:Android 10+ diperlukan untuk folder Download/Abon Gulung Stok Kertas.";
             Uri item = null;
             try {
                 byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
                 ContentValues values = new ContentValues();
                 values.put(MediaStore.Downloads.DISPLAY_NAME, filename);
-                values.put(MediaStore.Downloads.MIME_TYPE, "application/vnd.abongulunggembul.stok-backup+json");
-                values.put(MediaStore.Downloads.RELATIVE_PATH, "Download/Abon Gulung Gembul");
+                values.put(MediaStore.Downloads.MIME_TYPE, "application/vnd.abongulung.stok-backup+json");
+                values.put(MediaStore.Downloads.RELATIVE_PATH, "Download/Abon Gulung Stok Kertas");
                 values.put(MediaStore.Downloads.IS_PENDING, 1);
                 item = getContentResolver().insert(
                     MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), values);
@@ -95,7 +95,7 @@ public class MainActivity extends Activity {
                 ContentValues done = new ContentValues();
                 done.put(MediaStore.Downloads.IS_PENDING, 0);
                 getContentResolver().update(item, done, null, null);
-                return "OK:Download/Abon Gulung Gembul/" + filename;
+                return "OK:Download/Abon Gulung Stok Kertas/" + filename;
             } catch (Exception e) {
                 if (item != null) {
                     try { getContentResolver().delete(item, null, null); } catch (Exception ignored) { }
@@ -116,13 +116,13 @@ public class MainActivity extends Activity {
                 try {
                     connection = (HttpURLConnection)new URL(urlString).openConnection();
                     connection.setInstanceFollowRedirects(true); connection.setConnectTimeout(20000); connection.setReadTimeout(90000);
-                    connection.setRequestProperty("User-Agent", "AbonGulungGembul-Android"); connection.connect();
+                    connection.setRequestProperty("User-Agent", "AbonGulungStokKertas-Android"); connection.connect();
                     int code = connection.getResponseCode(); if (code < 200 || code >= 300) throw new IllegalStateException("HTTP " + code);
                     if (connection.getContentLengthLong() > 200L * 1024 * 1024) throw new IllegalStateException("APK melebihi 200 MB.");
                     ContentValues values = new ContentValues();
-                    values.put(MediaStore.Downloads.DISPLAY_NAME, "Abon-Gulung-Gembul-Stok-Kertas.apk");
+                    values.put(MediaStore.Downloads.DISPLAY_NAME, "Abon-Gulung-Stok-Kertas.apk");
                     values.put(MediaStore.Downloads.MIME_TYPE, "application/vnd.android.package-archive");
-                    values.put(MediaStore.Downloads.RELATIVE_PATH, "Download/Abon Gulung Gembul");
+                    values.put(MediaStore.Downloads.RELATIVE_PATH, "Download/Abon Gulung Stok Kertas");
                     values.put(MediaStore.Downloads.IS_PENDING, 1);
                     item = getContentResolver().insert(MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY), values);
                     if (item == null) throw new IllegalStateException("Tidak dapat membuat file APK.");
@@ -136,7 +136,7 @@ public class MainActivity extends Activity {
                     if(total<1024*1024)throw new IllegalStateException("Unduhan APK tidak lengkap.");
                     ContentValues done=new ContentValues();done.put(MediaStore.Downloads.IS_PENDING,0);getContentResolver().update(item,done,null,null);
                     Uri apkUri=item;
-                    runOnUiThread(()->{try{Intent install=new Intent(Intent.ACTION_VIEW);install.setDataAndType(apkUri,"application/vnd.android.package-archive");install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivity(install);}catch(Exception e){Toast.makeText(MainActivity.this,"APK tersimpan di Download/Abon Gulung Gembul.",Toast.LENGTH_LONG).show();}});
+                    runOnUiThread(()->{try{Intent install=new Intent(Intent.ACTION_VIEW);install.setDataAndType(apkUri,"application/vnd.android.package-archive");install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_GRANT_READ_URI_PERMISSION);startActivity(install);}catch(Exception e){Toast.makeText(MainActivity.this,"APK tersimpan di Download/Abon Gulung Stok Kertas.",Toast.LENGTH_LONG).show();}});
                 } catch(Exception e) {
                     if(item!=null)try{getContentResolver().delete(item,null,null);}catch(Exception ignored){}
                     runOnUiThread(()->Toast.makeText(MainActivity.this,"Gagal mengunduh APK: "+e.getMessage(),Toast.LENGTH_LONG).show());
@@ -193,7 +193,7 @@ public class MainActivity extends Activity {
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setAllowFileAccess(false);
         settings.setAllowContentAccess(true);
-        webView.addJavascriptInterface(new GembulBridge(), "InsanNative");
+        webView.addJavascriptInterface(new AbonGulungBridge(), "AbonGulungNative");
         webView.setWebChromeClient(new WebChromeClient() {
             @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> callback,
                     FileChooserParams params) {
