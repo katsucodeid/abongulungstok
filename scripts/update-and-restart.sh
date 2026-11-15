@@ -11,7 +11,7 @@ BACKUP_DIR="$REPORT_ROOT/Pencadangan"
 STATUS_FILE="$DATA_DIR/update-status.json"
 LOG_FILE="$BACKEND/server-update.log"
 PORT="$(sed -n 's/^PORT=//p' "$BACKEND/.env" | tail -n 1)"
-PORT="${PORT:-8787}"
+PORT="${PORT:-8788}"
 BRANCH="main"
 REMOTE="$(git -C "$ROOT" remote get-url origin)"
 case "$REMOTE" in https://github.com/katsucodeid/abongulungstok.git|git@github.com:katsucodeid/abongulungstok.git) ;; *) echo "Remote bukan repository Abon Gulung; pembaruan dibatalkan."; exit 2 ;; esac
