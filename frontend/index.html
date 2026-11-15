@@ -460,7 +460,7 @@ button{background:var(--accent);color:#fff;box-shadow:none}
 .app-footer{border-color:var(--line)}
 @media(prefers-color-scheme:dark){:root:not(.light){color-scheme:dark}}
 </style></head><body>
-<header><button class="secondary menu-toggle" id="menuToggle" type="button" aria-label="Buka navigasi" aria-expanded="false" onclick="toggleMenu()"><span></span><span></span><span></span></button><div class="brand-lockup"><img class="brand-logo" src="icon.png" alt="Logo Abon Gulung Stok Kertas"><div class="brand-copy"><b>ABON GULUNG GEMBUL</b><div class="muted">STOK KERTAS · PRODUKSI · OPERASIONAL</div></div></div><div class="header-actions"><div class="clock-chip" aria-label="Waktu sekarang"><strong id="liveClock">--:--:--</strong><small id="liveDate">Memuat tanggal…</small></div><button id="themeToggle" class="secondary theme-toggle" type="button" style="width:auto" aria-label="Ganti tema" aria-pressed="false">🌙 Tema Gelap</button></div></header>
+<header><button class="secondary menu-toggle" id="menuToggle" type="button" aria-label="Buka navigasi" aria-expanded="false" onclick="toggleMenu()"><span></span><span></span><span></span></button><div class="brand-lockup"><img class="brand-logo" src="icon.png" alt="Logo Abon Gulung Stok Kertas"><div class="brand-copy"><b>ABON GULUNG STOK KERTAS</b><div class="muted">STOK KERTAS · PRODUKSI · OPERASIONAL</div></div></div><div class="header-actions"><div class="clock-chip" aria-label="Waktu sekarang"><strong id="liveClock">--:--:--</strong><small id="liveDate">Memuat tanggal…</small></div><button id="themeToggle" class="secondary theme-toggle" type="button" style="width:auto" aria-label="Ganti tema" aria-pressed="false">🌙 Tema Gelap</button></div></header>
 <button class="nav-backdrop" id="navBackdrop" aria-label="Tutup navigasi" onclick="closeMenu()"></button>
 <main><div id="connection" class="muted">Memeriksa koneksi…</div><section id="updateNotice" class="panel hidden"><b id="updateTitle">Pembaruan tersedia</b><p id="updateMessage" class="muted">Versi baru tersedia.</p><button id="updateButton" onclick="installApkUpdate()">Update Sekarang</button></section>
 <section id="login" class="panel"><div class="login-brand"><div><span class="eyebrow">SISTEM OPERASIONAL</span><h2>Selamat datang</h2><p>Masuk untuk mengelola stok dan produksi.</p></div></div><label>Username</label><input id="username" autocomplete="username"><label>Password</label><input id="password" type="password" autocomplete="current-password"><button onclick="login()">Login</button><p id="loginMsg" class="muted"></p></section>
@@ -522,7 +522,7 @@ button{background:var(--accent);color:#fff;box-shadow:none}
 <h3>🛡️ Cadangkan &amp; Pulihkan Data</h3>
 <p class="hint">Buat file khusus <b>.insanbackup</b> yang berisi stok, akun pengguna, transaksi, pengaturan, dan riwayat. Simpan file ini di tempat aman. Pemulihan akan mengganti database aktif sesuai isi file.</p>
 <button id="createBackupButton" onclick="downloadBackup()">⬇️ Buat file cadangan</button>
-<label for="backupFileInput">Pilih file cadangan INSAN (.insanbackup)</label>
+<label for="backupFileInput">Pilih file cadangan Abon Gulung (.insanbackup)</label>
 <input id="backupFileInput" type="file" accept=".insanbackup,application/json" style="display:block;width:100%;min-height:48px;padding:10px;opacity:1;pointer-events:auto">
 <button class="danger" id="restoreBackupButton" onclick="restoreBackupFile()">Pulihkan data dari file</button>
 <p id="backupStatus" class="muted" aria-live="polite">Fitur ini hanya tersedia untuk admin saat terhubung ke server.</p>
