@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Abon Gulung Gembul - Stok Kertas",
-  "short_name": "Gembul Stok",
-  "description": "Sistem persediaan kertas, produksi, dan operasional Abon Gulung Gembul.",
+  "name": "Abon Gulung Stok Kertas",
+  "short_name": "Abon Gulung",
+  "description": "Sistem persediaan kertas, produksi, dan operasional Abon Gulung Stok Kertas.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
