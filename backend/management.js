@@ -22,7 +22,7 @@ module.exports = function registerManagementRoutes(app, ctx) {
   app.get("/api/admin/backup", auth, adminOnly, (req, res) => {
     try {
       const backup = makeBackup(getDb());
-      res.setHeader("Content-Disposition", 'attachment; filename="abongulung-backup-' + new Date().toISOString().replace(/[:.]/g, "-") + '.insanbackup"');
+      res.setHeader("Content-Disposition", 'attachment; filename="abongulung-backup-' + new Date().toISOString().replace(/[:.]/g, "-") + '.aggkrtsbackup"');
       res.setHeader("Content-Type", "application/vnd.abongulung.stok-backup+json; charset=utf-8");
       res.json(backup);
     } catch (e) {
@@ -52,7 +52,7 @@ module.exports = function registerManagementRoutes(app, ctx) {
       const result = await locked(async () => {
         const previous = getDb();
         const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-        const safetyPath = require("path").join(process.env.DATA_DIR || require("path").join(__dirname, "data"), "pre-restore-" + stamp + ".insanbackup");
+        const safetyPath = require("path").join(process.env.DATA_DIR || require("path").join(__dirname, "data"), "pre-restore-" + stamp + ".aggkrtsbackup");
         await require("fs").promises.writeFile(safetyPath, JSON.stringify(makeBackup(previous), null, 2), { mode: 0o600, flag: "wx" });
         try {
           database.stock = { ...database.stock };
