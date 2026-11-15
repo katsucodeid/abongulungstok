@@ -3,8 +3,12 @@ set -e
 ROOT="$HOME/abongulungstok"
 cd "$ROOT/backend"
 if [ ! -f .env ]; then echo "File .env belum ada. Jalankan scripts/install-termux.sh"; exit 1; fi
-PORT="$(sed -n 's/^PORT=//p' .env | tail -n 1)"
-PORT="${PORT:-8788}"
+# Jangan mewarisi variabel shell dari sesi aplikasi lain.
+unset DATA_DIR PORT HOST
+export PORT="8788"
+export HOST="127.0.0.1"
+export DATA_DIR="$ROOT/backend/data"
+export REPORT_DIR="$HOME/storage/downloads/Abon Gulung Stok Kertas"
 termux-wake-lock 2>/dev/null || true
 
 if [ ! -d "$HOME/storage/downloads" ] && command -v termux-setup-storage >/dev/null 2>&1; then
