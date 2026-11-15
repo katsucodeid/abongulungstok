@@ -11,9 +11,9 @@ module.exports = function registerManagementRoutes(app, ctx) {
   const makeBackup = database => {
     const serialized = JSON.stringify(database);
     return {
-      format: "INSAN-STOCK-BACKUP",
+      format: "ABONGULUNG-STOK-BACKUP",
       formatVersion: 1,
-      app: "INSAN Stock Manager",
+      app: "Abon Gulung Stok Kertas",
       createdAt: new Date().toISOString(),
       checksum: crypto.createHash("sha256").update(serialized).digest("hex"),
       database
@@ -22,8 +22,8 @@ module.exports = function registerManagementRoutes(app, ctx) {
   app.get("/api/admin/backup", auth, adminOnly, (req, res) => {
     try {
       const backup = makeBackup(getDb());
-      res.setHeader("Content-Disposition", 'attachment; filename="insan-backup-' + new Date().toISOString().replace(/[:.]/g, "-") + '.insanbackup"');
-      res.setHeader("Content-Type", "application/vnd.insan.stock-backup+json; charset=utf-8");
+      res.setHeader("Content-Disposition", 'attachment; filename="abongulung-backup-' + new Date().toISOString().replace(/[:.]/g, "-") + '.insanbackup"');
+      res.setHeader("Content-Type", "application/vnd.abongulung.stok-backup+json; charset=utf-8");
       res.json(backup);
     } catch (e) {
       res.status(500).json({ error: "Gagal membuat file cadangan: " + e.message });
@@ -32,8 +32,8 @@ module.exports = function registerManagementRoutes(app, ctx) {
   app.post("/api/admin/restore", auth, adminOnly, async (req, res) => {
     try {
       const backup = req.body;
-      if (!backup || backup.format !== "INSAN-STOCK-BACKUP" || backup.formatVersion !== 1 || !backup.database || typeof backup.database !== "object" || Array.isArray(backup.database)) {
-        throw new Error("Format file bukan cadangan INSAN yang didukung.");
+      if (!backup || backup.format !== "ABONGULUNG-STOK-BACKUP" || backup.formatVersion !== 1 || !backup.database || typeof backup.database !== "object" || Array.isArray(backup.database)) {
+        throw new Error("Format file bukan cadangan Abon Gulung yang didukung.");
       }
       const database = backup.database;
       if (!database.stock || typeof database.stock !== "object" || Array.isArray(database.stock) ||
