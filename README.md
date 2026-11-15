@@ -1,7 +1,7 @@
 # Abon Gulung Stok Kertas
 
 **Aplikasi mandiri untuk mengelola stok bahan dan kemasan operasional Abon Gulung.**  
-Versi aplikasi: **0.0.3** · Version code: **2** · Package: `id.katsucode.aggkrts`
+Versi aplikasi: **0.0.3** · Version code: **3** · Package: `id.katsucode.aggkrts`
 
 Repository resmi: https://github.com/katsucodeid/abongulungstok
 
@@ -27,7 +27,7 @@ Installer tidak mengimpor database, akun, atau password dari aplikasi lama. Inst
 - Riwayat transaksi, laporan TXT, pencadangan, dan pemulihan dengan validasi checksum.
 - Akun admin dan staff dengan pembatasan akses.
 - Alarm kerja Android dan pilihan nada lokal.
-- Operasional offline pada HP server; perangkat lain dapat mengakses melalui jaringan Wi-Fi/hotspot yang sama.
+- Server berjalan lokal pada HP Android yang sama melalui 127.0.0.1:8788; tidak dibuka ke jaringan Wi-Fi publik.
 
 ## Versi aplikasi
 
@@ -35,7 +35,7 @@ Installer tidak mengimpor database, akun, atau password dari aplikasi lama. Inst
 |---|---|
 | Nama | Abon Gulung Stok Kertas |
 | Versi | **0.0.3** |
-| Version code | `2` |
+| Version code | `3` |
 | Application ID | `id.katsucode.aggkrts` |
 | Minimum Android | Android 6.0 (API 23) |
 | Target SDK | 35 |
