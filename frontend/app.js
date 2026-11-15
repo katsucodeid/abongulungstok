@@ -30,7 +30,7 @@ async function api(path,opts={}){const r=await fetch(API+"/api"+path,{...opts,he
 function showLogin(){ $("login").classList.remove("hidden");$("app").classList.add("hidden");}
 function showApp(){ $("login").classList.add("hidden");$("app").classList.remove("hidden");}
 async function login(){try{const d=await api("/auth/login",{method:"POST",body:JSON.stringify({username:$("username").value,password:$("password").value})});token=d.token;cachedUser=d.user;localStorage.setItem("aggkrts_token",token);await kvSet("user",cachedUser);await refresh();}catch(e){$("loginMsg").textContent=e.message;}}
-async function logout(){closeMenu();token=null;cachedUser=null;localStorage.removeItem("insan_token");await kvDelete("user");showLogin();}
+async function logout(){closeMenu();token=null;cachedUser=null;localStorage.removeItem("aggkrts_token");await kvDelete("user");showLogin();}
 async function refresh(){try{state=await api("/state");await kvSet("state",state);showApp();cachedUser=state.user;await renderAll();setStatus("Terhubung · data server terbaru","ok");await syncQueue();}catch(e){if(e instanceof TypeError){state=await kvGet("state");cachedUser=await kvGet("user");if(state&&cachedUser){showApp();await renderAll();setStatus("Offline · perubahan disimpan di perangkat","low");}else{showLogin();$("loginMsg").textContent="Login pertama membutuhkan koneksi ke server.";}}else if(e.status===401){showLogin();$("loginMsg").textContent=e.message;}else{state=await kvGet("state");cachedUser=await kvGet("user");if(state&&cachedUser){showApp();await renderAll();setStatus("Server tidak tersedia · mode offline","low");}else showLogin();}}}
 async function renderAll(){if(!state)return;const isAdmin=(cachedUser?.role||state.user?.role)==="admin";const backupPanel=$("backupPanel"),updateCard=$("updateCard");if(backupPanel)backupPanel.hidden=!isAdmin;if(updateCard)updateCard.hidden=!isAdmin;syncActiveNav();$("who").textContent=(cachedUser?.username||state.user?.username||"Pengguna")+" · "+(cachedUser?.role||state.user?.role||"offline");renderStock();renderHistory();renderDailyTargets();await loadReport();const q=await queueAll();$("pendingCount").textContent=q.length?(" · "+q.length+" transaksi menunggu sinkronisasi"):"";checkForUpdates();}
 function renderStock(){const defs=state.itemDefs||{};$("stockGrid").innerHTML=Object.entries(state.stock||{}).map(([k,v])=>{const def=defs[k]||{label:k,min:null};return `<div class="panel"><div class="muted">${def.label}</div><div class="qty">${Number(v).toLocaleString("id-ID")} pcs</div><div class="${def.min!==null&&v<def.min?'low':'ok'} muted">${def.min===null?'Batas minimum belum ditetapkan':v<def.min?'Di bawah minimum '+def.min:'Aman · minimum '+def.min}</div></div>`;}).join("");}
@@ -94,29 +94,18 @@ async function restoreBackupFile(){
     if(status)status.textContent="Memeriksa file dan memulihkan database…";
     const result=await api("/admin/restore",{method:"POST",body:JSON.stringify(backup)});
     if(status)status.textContent="Pemulihan berhasil. Silakan login kembali. Pengguna: "+result.summary.users+" · Transaksi: "+result.summary.transactions;
-    localStorage.removeItem("insan_token");
+    localStorage.removeItem("aggkrts_token");
     token=null;
     setTimeout(()=>location.reload(),1200);
   }catch(e){if(status)status.textContent="Pemulihan dibatalkan: "+e.message;}
   finally{if(button)button.disabled=false;}
 }
 async function loadAbout(){
-  const versionEl=$("aboutVersion"), list=$("changeLogList"), status=$("changeLogStatus");
-  if(!list)return;
-  try{
-    const data=await api("/update/history");
-    if(versionEl)versionEl.textContent="Versi "+(data.version||"—");
-    list.replaceChildren();
-    (data.commits||[]).forEach(item=>{
-      const card=document.createElement("article");card.className="history-card";
-      const title=document.createElement("b");title.textContent=item.message||"Pembaruan";
-      const meta=document.createElement("div");meta.className="muted";meta.textContent=(item.date||"")+(item.sha?" · "+item.sha:"");
-      card.append(title,meta);list.appendChild(card);
-    });
-    if(status)status.textContent="Riwayat perubahan yang sudah terpasang di perangkat ini.";
-  }catch(e){
-    if(status)status.textContent="Riwayat lokal belum tersedia: "+e.message;
-  }
+   const versionEl=$("aboutVersion"), list=$("changeLogList"), status=$("changeLogStatus");
+   const installed=window.InsanNative?.getAppVersion?.()||"0.0.1";
+   if(versionEl)versionEl.textContent="Versi "+installed;
+   if(list)list.replaceChildren();
+   if(status)status.textContent="Informasi versi khusus Abon Gulung Stok Kertas. Pembaruan APK hanya berasal dari rilis aggkrts-v* repository Abon Gulung.";
 }
 
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeMenu();});
@@ -287,7 +276,7 @@ async function syncQueue(){if(!token)return;const queue=await queueAll();if(!que
 async function createDailyReport(){
   const button=$("createDailyReportButton"),status=$("dailyReportStatus");
   if(!token||cachedUser?.role!=="admin"){if(status)status.textContent="Pembuatan laporan TXT hanya dapat dilakukan admin.";return;}
-  try{if(button)button.disabled=true;if(status)status.textContent="Membuat/memperbarui laporan hari ini…";const result=await api("/daily-report",{method:"POST",body:JSON.stringify({})});if(status)status.textContent=result.message+" File: "+result.filename+" · Download/Abon Gulung Gembul/Laporan/";}
+  try{if(button)button.disabled=true;if(status)status.textContent="Membuat/memperbarui laporan hari ini…";const result=await api("/daily-report",{method:"POST",body:JSON.stringify({})});if(status)status.textContent=result.message+" File: "+result.filename+" · Download/Abon Gulung Stok Kertas/Laporan/";}
   catch(error){if(status)status.textContent="Gagal membuat laporan: "+error.message;}
   finally{if(button)button.disabled=false;}
 }
