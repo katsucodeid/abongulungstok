@@ -4,7 +4,7 @@ Satu HP Android milik pemilik menjalankan backend Node.js di Termux sebagai serv
 
 ## Penyimpanan data
 
-- Database utama: ~/abongulungstok/backend/data/data.json di ruang penyimpanan privat Termux.
+- Database utama: ~/abongulunggembulstokinsan/backend/data/data.json di ruang penyimpanan privat Termux.
 - Salinan database teks: Download/Abon Gulung Gembul/database-stok.txt, diperbarui setiap kali database berubah.
 - Laporan harian: Download/Abon Gulung Gembul/11november2026.txt, 12november2026.txt, dan seterusnya.
 - Cadangan otomatis: file .txt dibuat sebelum pembaruan pertama dan sebelum setiap laporan harian baru.
