@@ -5,14 +5,16 @@ ROOT="$HOME/abongulungstok"
 SERVER_PID="${1:-}"
 BACKEND="$ROOT/backend"
 DATA_DIR="${DATA_DIR:-$BACKEND/data}"
-REPORT_ROOT="${REPORT_DIR:-$HOME/storage/downloads/Abon Gulung Gembul}"
+REPORT_ROOT="${REPORT_DIR:-$HOME/storage/downloads/Abon Gulung Stok Kertas}"
 REPORT_DIR="$REPORT_ROOT/Laporan"
 BACKUP_DIR="$REPORT_ROOT/Pencadangan"
 STATUS_FILE="$DATA_DIR/update-status.json"
 LOG_FILE="$BACKEND/server-update.log"
 PORT="$(sed -n 's/^PORT=//p' "$BACKEND/.env" | tail -n 1)"
 PORT="${PORT:-8787}"
-BRANCH="$(git -C "$ROOT" branch --show-current)"
+BRANCH="main"
+REMOTE="$(git -C "$ROOT" remote get-url origin)"
+case "$REMOTE" in https://github.com/katsucodeid/abongulungstok.git|git@github.com:katsucodeid/abongulungstok.git) ;; *) echo "Remote bukan repository Abon Gulung; pembaruan dibatalkan."; exit 2 ;; esac
 SERVER_STOPPED=0
 
 write_status() {
