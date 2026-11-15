@@ -6,6 +6,7 @@ on:
     paths:
       - 'android/**'
       - 'frontend/**'
+      - 'backend/**'
       - '.github/workflows/build-apk.yml'
   pull_request:
     branches: [main]
