@@ -1,4 +1,4 @@
-const API=(window.ABON GULUNG_CONFIG?.API_BASE||"").replace(/\/$/,"");
+const API=(window.AGGKRTP_CONFIG?.API_BASE||"").replace(/\/$/,"");
 
 const isAggkrtsApp=new URLSearchParams(location.search).get("app")==="aggkrts";
 if(isAggkrtsApp){
@@ -207,6 +207,14 @@ async function checkForUpdates(){
  }catch(error){console.info("Pemeriksaan update dilewati:",error.message);}
  finally{updateCheckRunning=false;}
 }
+async function installApkUpdate(){
+ if(!window.aggkrtsReleaseAssetUrl){alert("Belum ada APK rilis Abon Gulung yang tersedia.");return;}
+ if(!window.AbonGulungNative?.downloadAndInstallApk){alert("Pemasangan APK otomatis hanya tersedia di aplikasi Android Abon Gulung.");return;}
+ const result=window.AbonGulungNative.downloadAndInstallApk(window.aggkrtsReleaseAssetUrl);
+ if(result==="STARTED"){$("updateMessage").textContent="APK diunduh. Konfirmasi pemasangan melalui Android setelah unduhan selesai.";return;}
+ if(result==="PERMISSION_REQUIRED"){alert("Aktifkan izin memasang aplikasi tidak dikenal untuk Abon Gulung, lalu tekan Update Sekarang lagi.");return;}
+ if(String(result).startsWith("ERROR:"))alert(result.slice(6));
+}
 const updateDelay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function applyUpdate(){
   if(window.aggkrtsUpdateRunning)return;
@@ -237,20 +245,9 @@ async function applyUpdate(){
             if(result==="PERMISSION_REQUIRED"){if(message)message.textContent="Aktifkan izin memasang aplikasi tidak dikenal untuk aplikasi ini, lalu ulangi Update Aplikasi.";if(status)status.textContent="Izin pemasangan diperlukan.";if(overlay)overlay.classList.add("hidden");return;}
             if(String(result).startsWith("ERROR:"))throw new Error(result.slice(6));
           }
-          if(message)message.textContent="APK release tersedia di GitHub Releases, tetapi jembatan Android tidak tersedia pada perangkat ini.";
-          if(status)status.textContent="Kode server diperbarui; pemasangan APK otomatis tidak tersedia pada perangkat ini.";
-          if(overlay)overlay.classList.add("hidden");return;
-          try{
-            const registration=await navigator.serviceWorker?.getRegistration();
-            if(registration){
-              await registration.update();
-              const worker=registration.installing||registration.waiting;
-              if(worker)await Promise.race([
-                new Promise(resolve=>worker.addEventListener("statechange",()=>{if(worker.state==="activated"||worker.state==="redundant")resolve();})),
-                updateDelay(10000)
-              ]);
-            }
-          }catch{}
+          if(status)status.textContent="Kode server Abon Gulung berhasil diperbarui. Memuat ulang aplikasi…";
+          if(message)message.textContent="Database dan akun tetap dipertahankan. Aplikasi akan tersambung kembali ke server Abon Gulung.";
+          if(overlay)overlay.classList.add("hidden");
           location.reload();
           return;
         }
