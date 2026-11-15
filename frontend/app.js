@@ -70,7 +70,7 @@ async function downloadBackup(){
     const match=disposition.match(/filename="([^"]+)"/);
     const filename=match?.[1]||("abongulung-backup-"+new Date().toISOString().slice(0,10)+".aggkrtsbackup");
     if(window.AbonGulungNative?.saveBackup){const saved=window.AbonGulungNative.saveBackup(await blobToBase64(blob),filename);if(!saved||saved.startsWith("ERROR:"))throw new Error(saved||"Penyimpanan gagal.");if(status)status.textContent="Cadangan tersimpan di Download/Abon Gulung Stok Kertas/"+filename;}
-    else{const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);if(status)status.textContent="Unduhan dimulai: "+filename+". Simpan ke folder Download/Insan Stok.";}
+    else{const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);if(status)status.textContent="Unduhan dimulai: "+filename+". Simpan ke folder Download/Abon Gulung Stok Kertas.";}
   }catch(e){if(status)status.textContent="Gagal membuat cadangan: "+e.message;}
   finally{if(button)button.disabled=false;}
 }
