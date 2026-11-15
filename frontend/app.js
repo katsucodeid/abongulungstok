@@ -214,7 +214,7 @@ async function checkForUpdates(){
   const latest=String(release?.tag_name||"").replace(/^aggkrts-v/i,"").replace(/^v/i,"");
   if(isAggkrtsApp)window.aggkrtsReleaseAssetUrl=release?.assets?.find(x=>/^Abon-Gulung-Stok-Kertas-V[0-9.]+\\.apk$/i.test(x.name))?.browser_download_url||"";
   const installed=window.AbonGulungNative?.getAppVersion?.()||"0.0.2";
-  if(!latest||compareVersions(latest,installed)<=0){if(notice)notice.classList.add("hidden");return;}
+  if(!latest||compareVersions(latest,installed)<=0||(isAggkrtsApp&&!window.aggkrtsReleaseAssetUrl)){if(notice)notice.classList.add("hidden");return;}
   if(title)title.textContent="🔔 Pembaruan tersedia · v"+latest;
   if(message)message.textContent=(release.name||"Versi terbaru Abon Gulung Stok Kertas")+" sudah tersedia. Ketuk Update Sekarang untuk memperbarui aplikasi.";
   if(notice)notice.classList.remove("hidden");
@@ -259,7 +259,7 @@ async function applyUpdate(){
         if(status&&result.message)status.textContent=result.message;
         if(result.status==="completed"){
           if(title)title.textContent="Kode server diperbarui";
-          if(message)message.textContent=window.aggkrtsReleaseAssetUrl?"Mengunduh APK Android Abon Gulung terbaru…":"Kode server sudah diperbarui. Belum ada APK rilis lebih baru di repository Abon Gulung.";
+          
           if(status)status.textContent="Kode server diperbarui. Menyiapkan pemasangan APK…";
           if(status)status.textContent="Kode server Abon Gulung berhasil diperbarui. Memuat ulang aplikasi…";
           if(message)message.textContent="Database dan akun tetap dipertahankan. Aplikasi akan tersambung kembali ke server Abon Gulung.";
