@@ -17,7 +17,7 @@ const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, "data");
 const DATA_FILE = path.join(DATA_DIR, "data.json");
 const FRONTEND_DIR = path.resolve(__dirname, "../frontend");
 const REPO_DIR = path.resolve(__dirname, "..");
-const REPORT_ROOT = process.env.REPORT_DIR || path.join(os.homedir(), "storage", "downloads", "Abon Gulung Gembul");
+const REPORT_ROOT = process.env.REPORT_DIR || path.join(os.homedir(), "storage", "downloads", "Abon Gulung Stok Kertas");
 const REPORT_DIR = path.join(REPORT_ROOT, "Laporan");
 const BACKUP_DIR = path.join(REPORT_ROOT, "Pencadangan");
 const UPDATE_STATUS_FILE = path.join(DATA_DIR, "update-status.json");
@@ -155,7 +155,7 @@ async function applyOperation(op, username) {
   return { id: op.id, accepted: true };
 }
 
-app.get("/api/health", (req, res) => res.json({ ok: true, service: "Abon Gulung Gembul Local API", storage: "Termux + Download TXT mirror", mode: "offline-local", online: false, bootId: SERVER_BOOT_ID }));
+app.get("/api/health", (req, res) => res.json({ ok: true, service: "Abon Gulung Stok Kertas API", app: "Abon Gulung Stok Kertas", storage: "Termux + Download TXT mirror", mode: "offline-local", online: false, bootId: SERVER_BOOT_ID }));
 app.post("/api/auth/login", async (req, res) => {
   const { username, password } = req.body || {};
   const user = db.users.find(x => x.username === username);
