@@ -57,7 +57,7 @@ async function backupExistingDatabase(dataFile, backupDir) {
   const filename = `cadangan-sebelum-pembaruan-${stamp()}.txt`;
   const destination = path.join(backupDir, filename);
   const body = [
-    "CADANGAN DATABASE ABON GULUNG GEMBUL",
+    "CADANGAN DATABASE ABON GULUNG STOK KERTAS",
     "Dibuat sebelum pembaruan sistem laporan offline.",
     "Simpan file ini dengan aman dan jangan bagikan kepada orang lain.",
     "",
@@ -73,7 +73,7 @@ async function mirrorDatabase(database, backupDir) {
   const destination = path.join(backupDir, "database-stok.txt");
   const temporary = destination + "." + process.pid + "." + require("crypto").randomUUID() + ".tmp";
   const body = [
-    "DATABASE LOKAL ABON GULUNG GEMBUL",
+    "DATABASE LOKAL ABON GULUNG STOK KERTAS",
     "Salinan otomatis dari database Termux. Jangan edit file ini secara manual.",
     "File ini diperbarui setiap kali ada perubahan data.",
     "",
