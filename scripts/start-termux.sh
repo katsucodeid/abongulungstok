@@ -12,8 +12,8 @@ if [ ! -d "$HOME/storage/downloads" ] && command -v termux-setup-storage >/dev/n
   termux-setup-storage
 fi
 if [ -d "$HOME/storage/downloads" ]; then
-  mkdir -p "$HOME/storage/downloads/Abon Gulung Gembul"
-  export REPORT_DIR="$HOME/storage/downloads/Abon Gulung Gembul"
+  mkdir -p "$HOME/storage/downloads/Abon Gulung Stok Kertas"
+  export REPORT_DIR="$HOME/storage/downloads/Abon Gulung Stok Kertas"
   echo "Laporan TXT: $REPORT_DIR"
 else
   echo "PERINGATAN: izin Download belum aktif. Jalankan termux-setup-storage dan izinkan akses file."
@@ -30,11 +30,11 @@ socket.once("timeout", () => { socket.destroy(); process.exit(1); });
 socket.once("error", () => process.exit(1));
 NODE
 then
-  echo "Abon Gulung Gembul - Stok Kertas sudah berjalan pada port $PORT."
+  echo "Abon Gulung Stok Kertas sudah berjalan pada port $PORT."
   echo "Jangan jalankan server kedua. Untuk menerapkan pembaruan, hentikan server lama dengan CTRL+C pada sesi Termux yang menjalankannya, lalu jalankan skrip ini lagi."
   exit 0
 fi
 
-echo "Mode: OFFLINE LOKAL — server hanya menerima koneksi dari HP ini."
+echo "Mode: OFFLINE LOKAL — server Abon Gulung Stok Kertas berjalan pada HP ini."
 echo "Buka aplikasi Android Abon Gulung Gembul pada perangkat yang sama."
 npm start
