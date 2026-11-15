@@ -1,89 +1,60 @@
 # Abon Gulung Stok Kertas
 
-**Aplikasi Android KatsuCode untuk mengelola stok bahan dan kemasan Abon Gulung Gembul.**  
-Versi aplikasi saat ini: **0.0.1** · Package: `id.katsucode.aggkrts`
+**Aplikasi mandiri untuk mengelola stok bahan dan kemasan operasional Abon Gulung.**  
+Versi aplikasi: **0.0.2** · Version code: **2** · Package: `id.katsucode.aggkrts`
 
 Repository resmi: https://github.com/katsucodeid/abongulungstok
 
-## Tentang aplikasi
+## Identitas dan pemisahan sistem
 
-Abon Gulung Stok Kertas membantu admin dan staff mencatat persediaan, barang masuk, target produksi, riwayat transaksi, laporan, serta alarm kerja. Aplikasi Android ini menggunakan WebView sebagai antarmuka dan backend Node.js yang dijalankan secara lokal melalui Termux.
+Repository ini merupakan aplikasi terpisah dari `abongulunggembulstokinsan`.
 
-Fitur utama:
+- Database sendiri: `~/abongulungstok/backend/data/data.json`.
+- Konfigurasi dan kredensial sendiri: `~/abongulungstok/backend/.env`.
+- JWT secret dan sesi login sendiri.
+- Username admin awal sendiri: `adminabongulung`; password dibuat acak oleh installer dan ditampilkan di Termux saat pertama kali dibuat.
+- Folder laporan dan cadangan sendiri: `Download/Abon Gulung Stok Kertas/`.
+- Port backend khusus: `8788` (server lama dapat tetap memakai `8787`).
+- Cache browser, IndexedDB, localStorage, dan service worker memakai namespace aplikasi Abon Gulung.
+- APK memakai application ID `id.katsucode.aggkrts` dan sertifikat signing Abon Gulung.
+
+Installer tidak mengimpor database, akun, atau password dari aplikasi lama. Installer tidak menghapus database lama. Jangan menyalin file database atau `.env` antar-repository jika ingin menjaga pemisahan.
+
+## Fitur
+
 - Dashboard stok Box isi 3, Box isi 5 luar/dalam, Kertas Minyak, dan Mika roti roll.
-- Pencatatan stok datang, stok manual, target produksi, dan riwayat transaksi.
-- Laporan TXT, pencadangan, serta pemulihan database.
-- Akun admin dan staff dengan hak akses berbeda.
-- Alarm kerja Android dan pemberitahuan pembaruan aplikasi.
-- Dukungan penggunaan lokal/offline pada HP server; perangkat lain dapat terhubung melalui Wi-Fi/hotspot yang sama.
+- Pencatatan barang masuk, pengurangan stok manual, dan target produksi per outlet.
+- Riwayat transaksi, laporan TXT, pencadangan, dan pemulihan dengan validasi checksum.
+- Akun admin dan staff dengan pembatasan akses.
+- Alarm kerja Android dan pilihan nada lokal.
+- Operasional offline pada HP server; perangkat lain dapat mengakses melalui jaringan Wi-Fi/hotspot yang sama.
 
-## Informasi versi
+## Versi aplikasi
 
 | Komponen | Nilai |
 |---|---|
-| Nama aplikasi | Abon Gulung Stok Kertas |
-| Versi | **0.0.1** |
-| Version code | `1` |
-| Android application ID | `id.katsucode.aggkrts` |
+| Nama | Abon Gulung Stok Kertas |
+| Versi | **0.0.2** |
+| Version code | `2` |
+| Application ID | `id.katsucode.aggkrts` |
 | Minimum Android | Android 6.0 (API 23) |
 | Target SDK | 35 |
-| Versi Java | 17 |
+| Java | 17 |
 | Gradle | 8.9 |
+| Backend | Node.js + Express |
+| Port default | `8788` |
 
-### Riwayat versi
+### Catatan versi 0.0.2
 
-**Versi 0.0.1 — 15 November 2026 (rilis awal)**
-- Membuat aplikasi Android khusus Abon Gulung Stok Kertas dengan application ID terpisah.
-- Menyediakan fitur stok, stok datang, target produksi, riwayat, laporan, pencadangan, dan pemulihan.
-- Menambahkan alarm kerja Android, pilihan nada, tes alarm, dan notifikasi pembaruan.
-- Menyiapkan proses build APK melalui GitHub Actions.
-- Mempertahankan sertifikat penandatanganan Abon Gulung untuk rilis aplikasi.
+- Memisahkan database, akun admin, token sesi, direktori laporan, dan port backend dari aplikasi stok sebelumnya.
+- Memisahkan cache browser dan identitas penyimpanan lokal.
+- Menghapus tampilan riwayat commit lintas aplikasi; versi hanya merujuk rilis bertag `aggkrts-v*` dari repository ini.
+- Memisahkan pembaruan kode server dari pemasangan APK Android.
+- Memperbaiki identitas file cadangan, laporan, dan jembatan native Android.
 
-## Membuat APK dari repository ini
+## Instalasi dan menjalankan backend di Termux
 
-Repository ini sudah memiliki workflow **Build Abon Gulung Stok Kertas APK** di `.github/workflows/build-apk.yml`.
-
-### Build otomatis dengan GitHub Actions
-
-1. Buka tab **Settings → Secrets and variables → Actions** pada repository.
-2. Tambahkan empat Actions secrets berikut. Isi nilainya langsung di GitHub; jangan menaruh password atau file keystore di repository:
-   - `ANDROID_KEYSTORE_BASE64`
-   - `ANDROID_KEYSTORE_PASSWORD`
-   - `ANDROID_KEY_ALIAS` — nilai alias: `abongulung`
-   - `ANDROID_KEY_PASSWORD`
-3. Buka tab **Actions**, pilih **Build Abon Gulung Stok Kertas APK**, lalu tekan **Run workflow** pada branch `main`.
-4. Tunggu sampai semua langkah selesai dengan status hijau.
-5. APK rilis dapat diambil dari **Releases** (tag `aggkrts-v0.0.1`) atau dari bagian **Artifacts** pada workflow run.
-
-Workflow juga berjalan otomatis ketika perubahan pada folder `android/`, `frontend/`, atau file workflow didorong ke branch `main`. Pull request akan membuat APK debug untuk pemeriksaan; push ke `main` atau workflow manual membuat APK release bertanda tangan.
-
-**Penting:** build release memerlukan empat secrets di atas. Jangan mengunggah `.jks`, password, token, atau file `.env` ke GitHub. APK belum dianggap berhasil dibuat sebelum workflow selesai dan artefak APK tersedia.
-
-### Build lokal (opsional)
-
-Siapkan JDK 17, Android SDK (platform 35 dan build-tools 35.0.0), serta Gradle 8.9. Dari folder repository:
-
-```bash
-gradle -p android :app-aggkrts:assembleDebug
-```
-
-APK debug berada di:
-
-```
-android/app-aggkrts/build/outputs/apk/debug/app-aggkrts-debug.apk
-```
-
-Untuk release bertanda tangan, siapkan environment signing yang sama seperti GitHub Actions sebelum menjalankan:
-
-```bash
-gradle -p android :app-aggkrts:assembleRelease
-```
-
-## Instalasi backend di Termux
-
-Aplikasi Android terhubung ke backend lokal pada `http://127.0.0.1:8788`. Pada HP server, backend Node.js dijalankan melalui Termux.
-
-Jika ini pemasangan backend baru, jalankan:
+Pada HP server, jalankan:
 
 ```bash
 pkg update && pkg upgrade -y
@@ -94,53 +65,69 @@ bash scripts/install-termux.sh
 bash scripts/start-termux.sh
 ```
 
-Jika folder repository sudah ada, perbarui dari branch utama dengan:
+Jika repository sudah ada:
 
 ```bash
 cd ~/abongulungstok
-git pull origin main
+git pull --ff-only origin main
+bash scripts/install-termux.sh
+bash scripts/start-termux.sh
 ```
 
-Berikan izin penyimpanan ketika Termux memintanya. Jika belum muncul, jalankan `termux-setup-storage`.
+Installer membuat atau memperbarui konfigurasi mandiri di `backend/.env`. Saat instalasi pertama atau saat mendeteksi konfigurasi lama yang menunjuk ke aplikasi sebelumnya, installer membuat username admin `adminabongulung` dan password acak baru. **Catat password yang ditampilkan Termux dan simpan di tempat aman.** Jika akun admin Abon Gulung sudah ada, installer mempertahankan akun yang sudah ada dan tidak mereset passwordnya.
 
-**Catatan database:** skrip instalasi membuat database mandiri di `~/abongulungstok/backend/data`, akun admin dan token autentikasi sendiri, folder laporan `Download/Abon Gulung Stok Kertas`, serta port khusus 8788. Database, akun, dan pembaruan aplikasi lama di `abongulunggembulstokinsan` tidak digunakan atau diimpor. Server aplikasi lama dapat tetap berjalan pada port 8787. Jangan menghapus folder database atau cadangan dari aplikasi mana pun.
+Server berjalan pada `http://127.0.0.1:8788`. Aplikasi Android membuka alamat lokal tersebut secara otomatis. Jangan menjalankan server kedua pada port yang sama.
 
-## Menjalankan aplikasi
+## Login dan pengelolaan akun
 
-- Pastikan backend Termux aktif pada port 8788.
-- Buka APK Abon Gulung Stok Kertas pada HP server.
-- Perangkat lain dapat membuka alamat LAN HP server melalui browser selama terhubung ke Wi-Fi/hotspot yang sama. Gunakan alamat yang ditampilkan Termux saat server mulai.
+- Login menggunakan akun yang tersimpan pada database Abon Gulung.
+- Username admin awal adalah `adminabongulung`.
+- Password awal dibuat acak oleh installer dan ditampilkan hanya ketika akun baru dibuat.
+- Admin dapat membuat akun staff melalui mekanisme pengelolaan akun yang tersedia di backend.
+- Jangan memakai kredensial `insanadmin` atau password dari aplikasi lama.
 
-Semua perangkat yang terhubung ke backend yang sama akan membaca dan memperbarui data pada database server. Jika HP server atau jaringan lokal mati, perangkat lain tidak dapat mengambil data terbaru.
+Jika password admin hilang, jangan menghapus database. Amankan salinan database dan konfigurasi terlebih dahulu, lalu lakukan prosedur pemulihan akun secara terkontrol.
 
-## Tentang & Pembaruan di dalam aplikasi
+## Membuat APK Android
 
-Halaman **Tentang & Pembaruan** menampilkan identitas aplikasi, versi terpasang (**0.0.1**), ringkasan fitur, dan riwayat perubahan.
+Workflow **Build Abon Gulung Stok Kertas APK** berada di `.github/workflows/build-apk.yml`.
 
-Bagian **Pembaruan aplikasi** menjelaskan dua jenis pembaruan:
-1. **Pembaruan kode server** melalui Termux: admin memulai proses dari aplikasi; sistem membuat cadangan database, mengambil kode repository, memasang dependensi, lalu memulai ulang backend secara terkontrol.
-2. **Pembaruan APK Android** melalui GitHub Releases: aplikasi memeriksa rilis dengan tag `aggkrts-v*`, mengunduh APK yang sesuai, lalu meminta konfirmasi pemasangan Android.
+Repository Actions secrets yang diperlukan:
+- `ANDROID_KEYSTORE_BASE64`: seluruh isi file Base64 dari keystore Abon Gulung.
+- `ANDROID_KEYSTORE_PASSWORD`: password keystore.
+- `ANDROID_KEY_ALIAS`: `abongulung`.
+- `ANDROID_KEY_PASSWORD`: password private key.
 
-Koneksi internet diperlukan untuk memeriksa atau mengunduh pembaruan. Operasional stok lokal tetap menggunakan backend pada HP server. Jangan menutup Termux selama pembaruan server berlangsung. Pastikan rilis APK tersedia di GitHub sebelum menggunakan pembaruan APK otomatis.
+Jangan pernah menaruh nilai secret, password, file JKS, database, atau `.env` di repository. Workflow memeriksa sertifikat SHA256 Abon Gulung sebelum menerbitkan APK.
 
-## Data, keamanan, dan cadangan
+Build berjalan otomatis ketika file aplikasi berubah di branch `main`, atau dapat dijalankan manual melalui tab **Actions**. Jika berhasil, rilis akan memakai tag `aggkrts-v0.0.2` dan file `Abon-Gulung-Stok-Kertas-V0.0.2.apk`. Status build dan artefak harus diperiksa di GitHub Actions; commit kode saja tidak berarti APK sudah berhasil dibuat.
 
-- Database utama berada di direktori data backend yang ditentukan oleh `DATA_DIR`; lokasi database khusus berada di `~/abongulungstok/backend/data`; aplikasi lama tidak digunakan.
-- Laporan dan salinan teks disimpan di folder Download/Abon Gulung Gembul.
-- Jangan mengedit file database secara manual.
-- Simpan cadangan berkala di lokasi lain.
-- Jangan pernah commit `.env`, database, keystore, password, atau token ke repository.
-- Pemulihan cadangan dapat mengganti data aktif; lakukan hanya setelah memastikan file cadangan yang benar.
+## Pembaruan
+
+Ada dua pembaruan yang berbeda:
+
+1. **Update Server** di dalam aplikasi memperbarui kode backend dari branch `main` repository ini. Sebelum update, server membuat salinan database dan tidak menghapus `.env`.
+2. **Update APK** memeriksa rilis dengan tag `aggkrts-v*` pada repository ini saja. APK diunduh dari asset rilis Abon Gulung dan pemasangannya tetap memerlukan persetujuan Android.
+
+Jangan menganggap commit repository sebagai versi APK. Hanya rilis bertag `aggkrts-v*` yang dipakai sebagai pembaruan Android.
+
+## Data dan keamanan
+
+- Database utama: `~/abongulungstok/backend/data/data.json`.
+- Konfigurasi rahasia: `~/abongulungstok/backend/.env`.
+- Laporan: `Download/Abon Gulung Stok Kertas/Laporan/`.
+- Cadangan: `Download/Abon Gulung Stok Kertas/Pencadangan/`.
+- Database dan konfigurasi aplikasi lama tidak disentuh.
+- Jangan mengedit database secara manual dan jangan menjalankan perintah reset database tanpa cadangan terverifikasi.
+- Simpan keystore Abon Gulung beserta password secara permanen. APK Android berikutnya harus ditandatangani dengan sertifikat yang sama agar dapat memperbarui aplikasi yang sudah terpasang.
 
 ## Struktur repository
 
-- `android/` — proyek Android dan modul `app-aggkrts`.
-- `backend/` — API Node.js dan pengelolaan data.
-- `frontend/` — antarmuka aplikasi web/WebView.
-- `scripts/` — instalasi, menjalankan, dan pembaruan backend Termux.
-- `docs/` — dokumentasi operasional.
-- `.github/workflows/` — workflow build APK otomatis.
+- `android/`: proyek aplikasi Android.
+- `backend/`: API, autentikasi, database, laporan, dan manajemen.
+- `frontend/`: antarmuka aplikasi.
+- `scripts/`: instalasi, start, dan update backend Termux.
+- `docs/`: dokumentasi.
+- `.github/workflows/`: build dan publikasi APK.
 
-## Lisensi dan pengembang
-
-Dikembangkan oleh **KatsuCode × Insan** untuk operasional Abon Gulung Gembul.
+Dikembangkan oleh **KatsuCode × Insan** untuk operasional Abon Gulung.
