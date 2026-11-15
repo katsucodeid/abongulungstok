@@ -36,5 +36,5 @@ then
 fi
 
 echo "Mode: OFFLINE LOKAL — server Abon Gulung Stok Kertas berjalan pada HP ini."
-echo "Buka aplikasi Android Abon Gulung Gembul pada perangkat yang sama."
+echo "Buka aplikasi Android Abon Gulung Stok Kertas pada perangkat yang sama."
 npm start
