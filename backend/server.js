@@ -9,7 +9,7 @@ const os = require("os");
 const { backupExistingDatabase, mirrorDatabase, createDailyReports } = require("./daily-reports");
 
 const app = express();
-const PORT = Number(process.env.PORT || 8787);
+const PORT = Number(process.env.PORT || 8788);
 // Bind to all interfaces so trusted devices on the same Wi-Fi/hotspot can connect.
 // Authentication remains mandatory for all data-changing and private API routes.
 const HOST = process.env.HOST || "0.0.0.0";
