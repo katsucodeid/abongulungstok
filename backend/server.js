@@ -237,7 +237,7 @@ app.get("/api/update/commits", auth, (req, res) => {
 app.get("/api/update/history", auth, (req, res) => {
   res.json({
     app: "Abon Gulung Stok Kertas",
-    version: "0.0.2",
+    version: "0.0.3",
     channel: "aggkrts",
     source: "katsucodeid/abongulungstok",
     commits: []
