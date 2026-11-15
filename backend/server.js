@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
-const { execFileSync, spawn } = require("child_process");
+const { spawn } = require("child_process");
 const os = require("os");
 const { backupExistingDatabase, mirrorDatabase, createDailyReports } = require("./daily-reports");
 
@@ -235,19 +235,13 @@ app.get("/api/update/commits", auth, (req, res) => {
 });
 
 app.get("/api/update/history", auth, (req, res) => {
-  try {
-    const raw = execFileSync("git", ["log", "-8", "--pretty=format:%h%x1f%s%x1f%cs"], {
-      cwd: REPO_DIR, encoding: "utf8", timeout: 5000
-    });
-    const commits = raw.split("\n").filter(Boolean).map(line => {
-      const [sha, message, date] = line.split("\x1f");
-      return { sha, message, date };
-    });
-    const pkg = JSON.parse(fs.readFileSync(path.join(REPO_DIR, "backend", "package.json"), "utf8"));
-    res.json({ version: pkg.version || "—", commits });
-  } catch (e) {
-    res.status(503).json({ error: "Riwayat perubahan belum dapat dibaca." });
-  }
+  res.json({
+    app: "Abon Gulung Stok Kertas",
+    version: "0.0.2",
+    channel: "aggkrts",
+    source: "katsucodeid/abongulungstok",
+    commits: []
+  });
 });
 app.get("/api/update/status", auth, adminOnly, async (req, res) => {
   try {
@@ -272,7 +266,7 @@ app.post("/api/update/apply", auth, adminOnly, async (req, res) => {
     const status = { status: "preparing", message: "Menyiapkan cadangan dan pembaruan…", startedAt: new Date().toISOString() };
     await fs.promises.writeFile(UPDATE_STATUS_FILE, JSON.stringify(status, null, 2), { mode: 0o600 });
     const runnerSource = path.join(REPO_DIR, "scripts", "update-and-restart.sh");
-    const runnerCopy = path.join(os.homedir(), ".abongulunggembul-update-runner.sh");
+    const runnerCopy = path.join(os.homedir(), ".abongulungstok-update-runner.sh");
     await fs.promises.copyFile(runnerSource, runnerCopy);
     await fs.promises.chmod(runnerCopy, 0o700);
     const child = spawn("bash", [runnerCopy, String(process.pid)], {
@@ -297,7 +291,7 @@ app.post("/api/daily-report", auth, adminOnly, async (req, res) => {
 });
 app.get("/api/report", auth, (req, res) => {
   const s = db.stock, fmt = n => Number(n || 0).toLocaleString("id-ID");
-  const report = `*INSAN*:
+  const report = `*ABON GULUNG*:
 Box isi 3 : ${fmt(s.box3)}pcs
 Box isi 5 luar : ${fmt(s.box5outer)}pcs
 Box isi 5 dalam : ${fmt(s.box5inner)}pcs
@@ -358,7 +352,7 @@ async function start() {
   await dailyReports.start();
   const server = app.listen(PORT, HOST, () => {
     const interfaces = Object.values(os.networkInterfaces()).flat().filter(x => x && x.family === "IPv4" && !x.internal);
-    console.log(`Abon Gulung Gembul aktif di http://127.0.0.1:${PORT}`);
+    console.log(`Abon Gulung Stok Kertas aktif di http://127.0.0.1:${PORT}`);
     if (HOST === "0.0.0.0" || HOST === "::") {
       console.log("Akses perangkat lain pada Wi-Fi/hotspot yang sama:");
       interfaces.forEach(x => console.log(`  http://${x.address}:${PORT}`));
