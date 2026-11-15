@@ -68,7 +68,7 @@ async function downloadBackup(){
     const blob=await response.blob();
     const disposition=response.headers.get("Content-Disposition")||"";
     const match=disposition.match(/filename="([^"]+)"/);
-    const filename=match?.[1]||("abongulung-backup-"+new Date().toISOString().slice(0,10)+".insanbackup");
+    const filename=match?.[1]||("abongulung-backup-"+new Date().toISOString().slice(0,10)+".aggkrtsbackup");
     if(window.AbonGulungNative?.saveBackup){const saved=window.AbonGulungNative.saveBackup(await blobToBase64(blob),filename);if(!saved||saved.startsWith("ERROR:"))throw new Error(saved||"Penyimpanan gagal.");if(status)status.textContent="Cadangan tersimpan di Download/Abon Gulung Stok Kertas/"+filename;}
     else{const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download=filename;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);if(status)status.textContent="Unduhan dimulai: "+filename+". Simpan ke folder Download/Insan Stok.";}
   }catch(e){if(status)status.textContent="Gagal membuat cadangan: "+e.message;}
@@ -76,10 +76,10 @@ async function downloadBackup(){
 }
 async function restoreBackupFile(){
   const input=$("backupFileInput"),status=$("backupStatus"),button=$("restoreBackupButton");
-  if(input&&!input.files?.length){input.click();if(status)status.textContent="Pilih file .insanbackup dari penyimpanan perangkat.";return;}
+  if(input&&!input.files?.length){input.click();if(status)status.textContent="Pilih file .aggkrtsbackup dari penyimpanan perangkat.";return;}
   const file=input?.files?.[0];
-  if(!file){if(status)status.textContent="Pilih file .insanbackup terlebih dahulu.";return;}
-  if(!file.name.toLowerCase().endsWith(".insanbackup")){if(status)status.textContent="Ekstensi file harus .insanbackup.";return;}
+  if(!file){if(status)status.textContent="Pilih file .aggkrtsbackup terlebih dahulu.";return;}
+  if(!file.name.toLowerCase().endsWith(".aggkrtsbackup")){if(status)status.textContent="Ekstensi file harus .aggkrtsbackup.";return;}
   if(file.size>25*1024*1024){if(status)status.textContent="Ukuran file melebihi batas 25 MB.";return;}
   if(!token){if(status)status.textContent="Login sebagai admin untuk memulihkan cadangan.";return;}
   let backup;
