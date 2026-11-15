@@ -74,7 +74,7 @@ bash scripts/install-termux.sh
 bash scripts/start-termux.sh
 ```
 
-Installer membuat atau memperbarui konfigurasi mandiri di `backend/.env`. Saat instalasi pertama atau saat mendeteksi konfigurasi lama yang menunjuk ke aplikasi sebelumnya, installer membuat username admin `adminabongulung` dan password acak baru. **Catat password yang ditampilkan Termux dan simpan di tempat aman.** Jika akun admin Abon Gulung sudah ada, installer mempertahankan akun yang sudah ada dan tidak mereset passwordnya.
+Installer membuat atau memperbarui konfigurasi mandiri di `backend/.env`. Saat instalasi pertama atau saat mendeteksi konfigurasi lama yang menunjuk ke aplikasi sebelumnya, installer membuat username admin `adminabongulung` dan password acak baru. **Catat password yang ditampilkan Termux dan simpan di tempat aman.** Jika installer mendeteksi konfigurasi lama, installer mengganti username dan password admin menjadi identitas baru tanpa menghapus stok, transaksi, staff, pengaturan, atau riwayat. Jika konfigurasi sudah mandiri, akun admin yang ada dipertahankan.
 
 Server berjalan pada `http://127.0.0.1:8788`. Aplikasi Android membuka alamat lokal tersebut secara otomatis. Jangan menjalankan server kedua pada port yang sama.
 
