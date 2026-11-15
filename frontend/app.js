@@ -32,7 +32,7 @@ function showApp(){ $("login").classList.add("hidden");$("app").classList.remove
 async function login(){try{const d=await api("/auth/login",{method:"POST",body:JSON.stringify({username:$("username").value,password:$("password").value})});token=d.token;cachedUser=d.user;localStorage.setItem("aggkrts_token",token);await kvSet("user",cachedUser);await refresh();}catch(e){$("loginMsg").textContent=e.message;}}
 async function logout(){closeMenu();token=null;cachedUser=null;localStorage.removeItem("aggkrts_token");await kvDelete("user");showLogin();}
 async function refresh(){try{state=await api("/state");await kvSet("state",state);showApp();cachedUser=state.user;await renderAll();setStatus("Terhubung · data server terbaru","ok");await syncQueue();}catch(e){if(e instanceof TypeError){state=await kvGet("state");cachedUser=await kvGet("user");if(state&&cachedUser){showApp();await renderAll();setStatus("Offline · perubahan disimpan di perangkat","low");}else{showLogin();$("loginMsg").textContent="Login pertama membutuhkan koneksi ke server.";}}else if(e.status===401){showLogin();$("loginMsg").textContent=e.message;}else{state=await kvGet("state");cachedUser=await kvGet("user");if(state&&cachedUser){showApp();await renderAll();setStatus("Server tidak tersedia · mode offline","low");}else showLogin();}}}
-async function renderAll(){if(!state)return;const isAdmin=(cachedUser?.role||state.user?.role)==="admin";const backupPanel=$("backupPanel"),updateCard=$("updateCard");if(backupPanel)backupPanel.hidden=!isAdmin;if(updateCard)updateCard.hidden=!isAdmin;syncActiveNav();$("who").textContent=(cachedUser?.username||state.user?.username||"Pengguna")+" · "+(cachedUser?.role||state.user?.role||"offline");renderStock();renderHistory();renderDailyTargets();await loadReport();const q=await queueAll();$("pendingCount").textContent=q.length?(" · "+q.length+" transaksi menunggu sinkronisasi"):"";checkForUpdates();}
+async function renderAll(){if(!state)return;const isAdmin=(cachedUser?.role||state.user?.role)==="admin";const backupPanel=$("backupPanel"),updateCard=$("updateCard"),usersNav=$("usersNav");if(backupPanel)backupPanel.hidden=!isAdmin;if(updateCard)updateCard.hidden=!isAdmin;if(usersNav)usersNav.hidden=!isAdmin;syncActiveNav();$("who").textContent=(cachedUser?.username||state.user?.username||"Pengguna")+" · "+(cachedUser?.role||state.user?.role||"offline");renderStock();renderHistory();renderDailyTargets();await loadReport();const q=await queueAll();$("pendingCount").textContent=q.length?(" · "+q.length+" transaksi menunggu sinkronisasi"):"";checkForUpdates();}
 function renderStock(){const defs=state.itemDefs||{};$("stockGrid").innerHTML=Object.entries(state.stock||{}).map(([k,v])=>{const def=defs[k]||{label:k,min:null};return `<div class="panel"><div class="muted">${def.label}</div><div class="qty">${Number(v).toLocaleString("id-ID")} pcs</div><div class="${def.min!==null&&v<def.min?'low':'ok'} muted">${def.min===null?'Batas minimum belum ditetapkan':v<def.min?'Di bawah minimum '+def.min:'Aman · minimum '+def.min}</div></div>`;}).join("");}
 function toggleMenu(){const nav=$("mainNav"),backdrop=$("navBackdrop"),btn=$("menuToggle");if(!nav||!backdrop||!btn)return;const open=!nav.classList.contains("open");nav.classList.toggle("open",open);backdrop.classList.toggle("visible",open);btn.setAttribute("aria-expanded",String(open));btn.setAttribute("aria-label",open?"Tutup navigasi":"Buka navigasi");document.body.classList.toggle("nav-open",open);}
 function closeMenu(){const nav=$("mainNav"),backdrop=$("navBackdrop"),btn=$("menuToggle");if(!nav||!backdrop||!btn)return;nav.classList.remove("open");backdrop.classList.remove("visible");btn.setAttribute("aria-expanded","false");btn.setAttribute("aria-label","Buka navigasi");document.body.classList.remove("nav-open");}
@@ -55,7 +55,7 @@ function syncActiveNav(){
     }else btn.removeAttribute("aria-current");
   });
 }
-function showTab(id){const target=$(id);if(!target)return;document.querySelectorAll(".tab").forEach(x=>x.classList.add("hidden"));target.classList.remove("hidden");syncActiveNav();closeMenu();if(id==="report")loadReport();if(id==="history")renderHistory();if(id==="about")loadAbout();}
+function showTab(id){const target=$(id);if(!target)return;document.querySelectorAll(".tab").forEach(x=>x.classList.add("hidden"));target.classList.remove("hidden");syncActiveNav();closeMenu();if(id==="report")loadReport();if(id==="history")renderHistory();if(id==="about")loadAbout();if(id==="users")loadUsers();}
 async function blobToBase64(blob){return new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(",")[1]||"");r.onerror=reject;r.readAsDataURL(blob);});}
 async function downloadBackup(){
   const status=$("backupStatus"),button=$("createBackupButton");
@@ -99,6 +99,28 @@ async function restoreBackupFile(){
     setTimeout(()=>location.reload(),1200);
   }catch(e){if(status)status.textContent="Pemulihan dibatalkan: "+e.message;}
   finally{if(button)button.disabled=false;}
+}
+async function loadUsers(){
+ const list=$("managedUserList"),status=$("managedUserStatus");if(!list||!token)return;list.replaceChildren();
+ try{const data=await api("/users"),current=data.currentUsername||cachedUser?.username||"";const own=$("adminNewUsername");if(own&&!own.value)own.value=current;
+  for(const account of data.users||[]){const card=document.createElement("article");card.className="history-card";const name=document.createElement("b");name.textContent=account.username;card.appendChild(name);const role=document.createElement("p");role.className="muted";role.textContent=account.role==="admin"?"Administrator":"Staff";card.appendChild(role);
+   if(account.username!==current){const actions=document.createElement("div");actions.className="row";const reset=document.createElement("button");reset.className="secondary";reset.textContent="Atur password";reset.onclick=()=>resetManagedPassword(account.username);actions.appendChild(reset);const remove=document.createElement("button");remove.className="danger";remove.textContent="Hapus akun";remove.onclick=()=>deleteManagedUser(account.username);actions.appendChild(remove);card.appendChild(actions);}else{const badge=document.createElement("span");badge.className="badge";badge.textContent="Akun aktif";card.appendChild(badge);}list.appendChild(card);
+  }if(status)status.textContent="Daftar akun berhasil dimuat.";
+ }catch(e){if(status)status.textContent="Gagal memuat akun: "+e.message;}
+}
+async function createManagedUser(){
+ const username=$("managedUsername")?.value.trim(),password=$("managedPassword")?.value,role=$("managedRole")?.value||"staff",status=$("managedUserStatus");if(!username||!password){if(status)status.textContent="Username dan password wajib diisi.";return;}
+ try{await api("/users",{method:"POST",body:JSON.stringify({username,password,role})});$("managedUsername").value="";$("managedPassword").value="";if(status)status.textContent="Akun "+username+" berhasil dibuat.";await loadUsers();}catch(e){if(status)status.textContent="Gagal membuat akun: "+e.message;}
+}
+async function changeOwnCredentials(){
+ const oldName=cachedUser?.username||state?.user?.username||"",newUsername=$("adminNewUsername")?.value.trim()||oldName,password=$("adminNewPassword")?.value||"",status=$("adminCredentialsStatus");if(!oldName){if(status)status.textContent="Akun aktif tidak ditemukan.";return;}if(newUsername===oldName&&!password){if(status)status.textContent="Tidak ada perubahan yang dimasukkan.";return;}
+ try{await api("/users/"+encodeURIComponent(oldName),{method:"PUT",body:JSON.stringify({newUsername,password:password||undefined})});localStorage.removeItem("aggkrts_token");token=null;cachedUser=null;if(status)status.textContent="Akun diperbarui. Silakan login kembali.";alert("Akun berhasil diperbarui. Login kembali dengan kredensial baru.");showLogin();}catch(e){if(status)status.textContent="Gagal memperbarui akun: "+e.message;}
+}
+async function resetManagedPassword(username){
+ const password=prompt("Masukkan password baru untuk "+username+" (minimal 10 karakter):");if(password===null)return;try{await api("/users/"+encodeURIComponent(username),{method:"PUT",body:JSON.stringify({password})});alert("Password akun "+username+" berhasil diperbarui.");}catch(e){alert("Gagal memperbarui password: "+e.message);}
+}
+async function deleteManagedUser(username){
+ if(!confirm("Hapus akun "+username+"? Riwayat transaksi akun tersebut tetap disimpan."))return;try{await api("/users/"+encodeURIComponent(username),{method:"DELETE"});await loadUsers();}catch(e){alert("Gagal menghapus akun: "+e.message);}
 }
 async function loadAbout(){
    const versionEl=$("aboutVersion"), list=$("changeLogList"), status=$("changeLogStatus");
