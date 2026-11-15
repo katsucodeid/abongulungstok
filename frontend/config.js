@@ -1,2 +1,2 @@
-// API same-origin: frontend and backend are served by the same Termux server.
-window.INSAN_CONFIG = { API_BASE: "" };
+// Konfigurasi API khusus Abon Gulung Stok Kertas; frontend dan backend memakai origin yang sama.
+window.AGGKRTP_CONFIG = { API_BASE: "" };
