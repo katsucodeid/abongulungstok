@@ -61,9 +61,9 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/katsucode-release.jks"
-          chmod 600 "$RUNNER_TEMP/katsucode-release.jks"
-          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/katsucode-release.jks" >> "$GITHUB_ENV"
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/abongulung-release.jks"
+          chmod 600 "$RUNNER_TEMP/abongulung-release.jks"
+          echo "ANDROID_KEYSTORE_PATH=$RUNNER_TEMP/abongulung-release.jks" >> "$GITHUB_ENV"
       - name: Build debug APK
         if: github.event_name == 'pull_request' || steps.signing.outputs.ready != 'true'
         run: gradle -p android --no-daemon :app-aggkrts:assembleDebug
@@ -85,7 +85,7 @@ jobs:
           APK=android/app-aggkrts/build/outputs/apk/release/app-aggkrts-release.apk
           CERT_OUTPUT=$("$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --print-certs "$APK")
           echo "$CERT_OUTPUT"
-          echo "$CERT_OUTPUT" | grep -qi "43ecffa454e59b8be2cec3f9c02b451dc9ec2d26dedf150e0a202d07d893d02e"
+          echo "$CERT_OUTPUT" | grep -qi "ca8447c83f0a71941190ec58fb311902bd1f147f91a2ce250b168f0ff3717604"
           cp "$APK" android/app-aggkrts/build/outputs/apk/release/Abon-Gulung-Stok-Kertas-V0.0.1.apk
       - name: Publish release
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && steps.signing.outputs.ready == 'true'
