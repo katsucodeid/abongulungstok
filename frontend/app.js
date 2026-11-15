@@ -12,7 +12,7 @@ if(isAggkrtsApp){
 }
 
 const $=id=>document.getElementById(id);
-let token=localStorage.getItem("insan_token"), state=null, cachedUser=null;
+let token=localStorage.getItem("aggkrts_token"), state=null, cachedUser=null;
 const DB_NAME="insan-stock-local", STORE="kv", QUEUE="queue";
 function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME,1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains(STORE))d.createObjectStore(STORE);if(!d.objectStoreNames.contains(QUEUE))d.createObjectStore(QUEUE,{keyPath:"id"});};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
 async function kvGet(key){const d=await openDB();return new Promise((resolve,reject)=>{const r=d.transaction(STORE).objectStore(STORE).get(key);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
@@ -29,7 +29,7 @@ function toggleTheme(){applyTheme(document.documentElement.classList.contains("l
 async function api(path,opts={}){const r=await fetch(API+"/api"+path,{...opts,headers:{"Content-Type":"application/json",...(token?{Authorization:"Bearer "+token}:{}),...(opts.headers||{})}});let d={};try{d=await r.json();}catch{}if(!r.ok){const e=new Error(d.error||"Permintaan gagal");e.status=r.status;throw e;}return d;}
 function showLogin(){ $("login").classList.remove("hidden");$("app").classList.add("hidden");}
 function showApp(){ $("login").classList.add("hidden");$("app").classList.remove("hidden");}
-async function login(){try{const d=await api("/auth/login",{method:"POST",body:JSON.stringify({username:$("username").value,password:$("password").value})});token=d.token;cachedUser=d.user;localStorage.setItem("insan_token",token);await kvSet("user",cachedUser);await refresh();}catch(e){$("loginMsg").textContent=e.message;}}
+async function login(){try{const d=await api("/auth/login",{method:"POST",body:JSON.stringify({username:$("username").value,password:$("password").value})});token=d.token;cachedUser=d.user;localStorage.setItem("aggkrts_token",token);await kvSet("user",cachedUser);await refresh();}catch(e){$("loginMsg").textContent=e.message;}}
 async function logout(){closeMenu();token=null;cachedUser=null;localStorage.removeItem("insan_token");await kvDelete("user");showLogin();}
 async function refresh(){try{state=await api("/state");await kvSet("state",state);showApp();cachedUser=state.user;await renderAll();setStatus("Terhubung · data server terbaru","ok");await syncQueue();}catch(e){if(e instanceof TypeError){state=await kvGet("state");cachedUser=await kvGet("user");if(state&&cachedUser){showApp();await renderAll();setStatus("Offline · perubahan disimpan di perangkat","low");}else{showLogin();$("loginMsg").textContent="Login pertama membutuhkan koneksi ke server.";}}else if(e.status===401){showLogin();$("loginMsg").textContent=e.message;}else{state=await kvGet("state");cachedUser=await kvGet("user");if(state&&cachedUser){showApp();await renderAll();setStatus("Server tidak tersedia · mode offline","low");}else showLogin();}}}
 async function renderAll(){if(!state)return;const isAdmin=(cachedUser?.role||state.user?.role)==="admin";const backupPanel=$("backupPanel"),updateCard=$("updateCard");if(backupPanel)backupPanel.hidden=!isAdmin;if(updateCard)updateCard.hidden=!isAdmin;syncActiveNav();$("who").textContent=(cachedUser?.username||state.user?.username||"Pengguna")+" · "+(cachedUser?.role||state.user?.role||"offline");renderStock();renderHistory();renderDailyTargets();await loadReport();const q=await queueAll();$("pendingCount").textContent=q.length?(" · "+q.length+" transaksi menunggu sinkronisasi"):"";checkForUpdates();}
@@ -202,18 +202,18 @@ async function checkForUpdates(){
   const release=isAggkrtsApp?(payload.find(x=>String(x.tag_name||"").startsWith("aggkrts-v"))||null):payload;
   const latest=String(release?.tag_name||"").replace(/^aggkrts-v/i,"").replace(/^v/i,"");
   if(isAggkrtsApp)window.aggkrtsReleaseAssetUrl=release?.assets?.find(x=>x.name==="Abon-Gulung-Stok-Kertas-V0.0.1.apk")?.browser_download_url||release?.assets?.[0]?.browser_download_url||"";
-  const installed=window.InsanNative?.getAppVersion?.()||"2.0.2";
+  const installed=window.InsanNative?.getAppVersion?.()||"0.0.1";
   if(!latest||compareVersions(latest,installed)<=0){if(notice)notice.classList.add("hidden");return;}
   if(title)title.textContent="🔔 Pembaruan tersedia · v"+latest;
-  if(message)message.textContent=(release.name||"Versi terbaru Abon Gulung Gembul")+" sudah tersedia. Ketuk Update Sekarang untuk memperbarui aplikasi.";
+  if(message)message.textContent=(release.name||"Versi terbaru Abon Gulung Stok Kertas")+" sudah tersedia. Ketuk Update Sekarang untuk memperbarui aplikasi.";
   if(notice)notice.classList.remove("hidden");
-  const notified=localStorage.getItem("insan_notified_release");
+  const notified=localStorage.getItem("aggkrts_notified_release");
   if(notified!==latest){
    const body="Versi "+latest+" siap dipasang. Buka aplikasi untuk memperbarui.";
    let delivered=false;
    if(window.InsanNative?.notifyUpdateAvailable){delivered=window.InsanNative.notifyUpdateAvailable(latest,body)==="OK";}
    else if("Notification"in window&&Notification.permission==="granted"){new Notification("Pembaruan aplikasi tersedia",{body,tag:"insan-app-update"});delivered=true;}
-   if(delivered)localStorage.setItem("insan_notified_release",latest);
+   if(delivered)localStorage.setItem("aggkrts_notified_release",latest);
   }
  }catch(error){console.info("Pemeriksaan update dilewati:",error.message);}
  finally{updateCheckRunning=false;}
