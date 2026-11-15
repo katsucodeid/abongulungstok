@@ -9,6 +9,9 @@ fi
 cd abongulungstok/backend
 npm install --no-audit --no-fund --package-lock=false
 touch .env
+# Gunakan database dan arsip milik aplikasi lama agar kedua aplikasi membaca data yang sama.
+if ! grep -q '^DATA_DIR=' .env; then echo "DATA_DIR=$HOME/abongulunggembulstokinsan/backend/data" >> .env; fi
+if ! grep -q '^REPORT_DIR=' .env; then echo "REPORT_DIR=$HOME/storage/downloads/Abon Gulung Gembul" >> .env; fi
 if ! grep -q '^JWT_SECRET=.' .env; then
   echo "JWT_SECRET=$(openssl rand -hex 32)" >> .env
 fi
