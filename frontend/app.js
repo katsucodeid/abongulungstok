@@ -7,7 +7,7 @@ if(isAggkrtsApp){
  const version=document.getElementById("aboutVersion");if(version)version.textContent="Versi 0.0.2";
  const featureHeading=[...document.querySelectorAll("#about h3")].find(x=>x.textContent.includes("Fitur operasional"));if(featureHeading)featureHeading.textContent="Fitur lengkap · Versi 0.0.2";
  const featureNote=featureHeading?.nextElementSibling;if(featureNote)featureNote.textContent="Rilis perdana 15 November 2026: aplikasi Android terpisah dengan fitur stok, transaksi, target produksi, laporan TXT, pencadangan, alarm kerja, notifikasi pembaruan, dan sinkronisasi server lokal.";
- const history=[...document.querySelectorAll("#about .history-card b")].find(x=>x.textContent.includes("Versi 2.0.2"));
+ const history=[...document.querySelectorAll("#about .history-card b")].find(x=>x.textContent.includes("Versi 0.0.2"));
  if(history){const card=history.closest(".history-card");if(card)card.innerHTML="<b>Versi 0.0.2 · 15 November 2026</b><ul><li>Pemisahan database, akun admin, token sesi, dan server Termux dari aplikasi stok sebelumnya.</li><li>Identitas aplikasi, laporan, pencadangan, dan penyimpanan lokal khusus Abon Gulung Stok Kertas.</li><li>Riwayat versi dibatasi pada rilis aggkrts repository ini.</li><li>Perbaikan pembaruan server dan tautan APK khusus Abon Gulung.</li></ul>";}
 }
 
